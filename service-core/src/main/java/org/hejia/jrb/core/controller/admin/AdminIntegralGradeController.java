@@ -2,10 +2,7 @@ package org.hejia.jrb.core.controller.admin;
 
 import org.hejia.jrb.core.pojo.entity.IntegralGrade;
 import org.hejia.jrb.core.service.IntegralGradeService;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -35,5 +32,14 @@ public class AdminIntegralGradeController {
         return integralGradeService.list();
     }
 
+    /**
+     * 根据id删除积分等级
+     * @param id 用户id
+     * @return 删除结果
+     */
+    @DeleteMapping("/remove/{id}")
+    public boolean removeById(@PathVariable Long id) {
+        return integralGradeService.removeById(id);
+    }
 
 }
