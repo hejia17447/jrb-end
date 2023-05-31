@@ -1,5 +1,6 @@
 package org.hejia.jrb.core.controller.admin;
 
+import org.hejia.common.result.Result;
 import org.hejia.jrb.core.pojo.entity.IntegralGrade;
 import org.hejia.jrb.core.service.IntegralGradeService;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +29,9 @@ public class AdminIntegralGradeController {
      * @return 积分等级列表
      */
     @GetMapping("/list")
-    public List<IntegralGrade> list() {
-        return integralGradeService.list();
+    public Result listAll() {
+        List<IntegralGrade> list = integralGradeService.list();
+        return Result.success().data("list", list);
     }
 
     /**
@@ -38,8 +40,13 @@ public class AdminIntegralGradeController {
      * @return 删除结果
      */
     @DeleteMapping("/remove/{id}")
-    public boolean removeById(@PathVariable Long id) {
-        return integralGradeService.removeById(id);
+    public Result removeById(@PathVariable Long id) {
+        boolean result = integralGradeService.removeById(id);
+        if (result) {
+            return Result.success().message("删除成功");
+        } else {
+            return Result.error().message("删除失败");
+        }
     }
 
 }
