@@ -75,6 +75,7 @@ subprojects {
     dependencies {
         testImplementation "org.springframework.boot:spring-boot-starter-test:${SpringBootVersion}"
         testImplementation 'junit:junit:4.13.1'
+        annotationProcessor 'org.projectlombok:lombok'
     }
 
     dependencyManagement{
