@@ -37,7 +37,7 @@ buildscript {
 
 // 全局配置
 allprojects {
-    apply plugin: 'java'
+    apply plugin: 'java-library'
     group = 'org.hejia'
     version = '1.0-SNAPSHOT'
     sourceCompatibility = '17'
@@ -62,7 +62,7 @@ allprojects {
 
     tasks.withType(JavaCompile).tap {
         configureEach {
-            options.encoding = "UTF_8"
+            options.encoding = "UTF-8"
         }
     }
 
@@ -73,7 +73,8 @@ subprojects {
     apply plugin: 'io.spring.dependency-management'
 
     dependencies {
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation "org.springframework.boot:spring-boot-starter-test:${SpringBootVersion}"
+        testImplementation 'junit:junit:4.13.1'
     }
 
     dependencyManagement{
@@ -110,6 +111,12 @@ subprojects {
             dependency "org.apache.httpcomponents.client5:httpclient5-parent:${Httpclient5Version}"
 
             dependency "mysql:mysql-connector-java:8.0.23"
+
+            dependency "org.springframework.boot:spring-boot-starter-undertow:${SpringBootVersion}"
+
+            dependency "org.projectlombok:lombok:1.18.28"
+
+            dependency "org.springframework.boot:spring-boot-starter-web:${SpringBootVersion}"
         }
         imports {
             mavenBom "org.springframework.boot:spring-boot-starter:${SpringBootVersion}"
@@ -121,28 +128,28 @@ subprojects {
 }
 
 // 子项目
-project("common") {
-    dependencies {
-        implementation 'org.projectlombok:lombok'
-        implementation('org.springframework.boot:spring-boot-starter-web') {
-            exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
-        }
-        implementation 'org.springframework.boot:spring-boot-starter-undertow'
-    }
-}
+//project("common") {
+//    dependencies {
+//        implementation 'org.projectlombok:lombok'
+//        implementation('org.springframework.boot:spring-boot-starter-web') {
+//            exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+//        }
+//        implementation 'org.springframework.boot:spring-boot-starter-undertow'
+//    }
+//}
 
-project("service-base") {
-    dependencies {
-        implementation(project(":common"))
-    }
-}
+//project("service-base") {
+//    dependencies {
+//        implementation(project(":common"))
+//    }
+//}
 
-project("service-core") {
-    dependencies {
-        implementation(project(":service-base"))
-        implementation 'mysql:mysql-connector-java'
-        implementation 'com.baomidou:mybatis-plus-boot-starter'
-        implementation 'com.baomidou:mybatis-plus-generator'
-        implementation 'org.apache.velocity:velocity-engine-core'
-    }
-}
+//project("service-core") {
+//    dependencies {
+//        implementation(project(":service-base"))
+//        implementation 'mysql:mysql-connector-java'
+//        implementation 'com.baomidou:mybatis-plus-boot-starter'
+//        implementation 'com.baomidou:mybatis-plus-generator'
+//        implementation 'org.apache.velocity:velocity-engine-core'
+//    }
+//}
