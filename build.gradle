@@ -1,0 +1,121 @@
+buildscript {
+    // 统一版本管理
+    ext {
+        SpringBootVersion = '3.1.0'
+        SpringCloudAlibabaVersion = '2022.0.0.0-RC2'
+        SpringCloudVersion = '2022.0.0'
+        MybatisPlusVersion = '3.5.3.1'
+        VelocityVersion = '2.3'
+        CommonsLang3Version = '3.12.0'
+        CommonsFileuploadVersion = '1.5'
+        CommonsIoVersion = '2.12.0'
+        AlibabaEasyexcelVersion = '3.3.1'
+        ApacheXmlbeansVersion = '5.1.1'
+        Fastjson2Version = '2.0.33'
+        GsonVersion = '2.10.1'
+        JsonVersion = '20230227'
+        AliyunJavaSdkCoreVersion = '4.6.3'
+        AliyunSdkOSSVersion = '3.16.3'
+        JodatimeVersion = '2.12.5'
+        JWTVersion = '0.11.5'
+        Httpclient5Version = '5.2.1'
+    }
+
+    // 设置仓库
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        // spring-boot-gradle插件，方便版本管理
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${SpringBootVersion}")
+    }
+
+}
+
+// 全局配置
+allprojects {
+    apply plugin: 'java'
+    group = 'org.hejia'
+    version = '1.0-SNAPSHOT'
+    sourceCompatibility = '17'
+    targetCompatibility = '17'
+
+    // 设置仓库
+    repositories {
+        mavenLocal()
+        maven { url 'https://maven.aliyun.com/repository/public/' }
+        mavenCentral()
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.encoding = "UTF_8"
+        }
+    }
+
+}
+// 配置所有子项目
+subprojects {
+
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencies {
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+
+    dependencyManagement{
+        dependencies {
+            // mybatis-plus
+            dependency "com.baomidou:mybatis-plus-boot-starter:${MybatisPlusVersion}"
+            // mybatis-plus 代码生成器
+            dependency "com.baomidou:mybatis-plus-generator:${MybatisPlusVersion}"
+            // Mybatis Plus 代码生成器模板引擎
+            dependency "org.apache.velocity:velocity-engine-core:${VelocityVersion}"
+            // commons-lang3
+            dependency "org.apache.commons:commons-lang3:${CommonsLang3Version}"
+            // 文件上传
+            dependency "commons-fileupload:commons-fileupload:${CommonsFileuploadVersion}"
+            // commons-io
+            dependency "commons-io:commons-io:${CommonsIoVersion}"
+            // excel解析
+            dependency "com.alibaba:easyexcel:${AlibabaEasyexcelVersion}"
+            // excel解析依赖
+            dependency "org.apache.xmlbeans:xmlbeans:${ApacheXmlbeansVersion}"
+            // json
+            dependency "com.alibaba.fastjson2:fastjson2:${Fastjson2Version}"
+            dependency "org.json:json:${JsonVersion}"
+            dependency "com.google.code.gson:gson:${GsonVersion}"
+            // 阿里云SDK远程调用
+            dependency "com.aliyun:aliyun-java-sdk-core:${AliyunJavaSdkCoreVersion}"
+            // 阿里云文件管理
+            dependency "com.aliyun.oss:aliyun-sdk-oss:${AliyunSdkOSSVersion}"
+            // 日期时间工具
+            dependency "joda-time:joda-time:${JodatimeVersion}"
+            // jwt工具
+            dependency "io.jsonwebtoken:jjwt-root:${JWTVersion}"
+            // httpclient
+            dependency "org.apache.httpcomponents.client5:httpclient5-parent:${Httpclient5Version}"
+
+            dependency "mysql:mysql-connector-java:8.0.23"
+        }
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-starter:${SpringBootVersion}"
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${SpringCloudVersion}"
+            mavenBom "com.alibaba.cloud:spring-cloud-alibaba-dependencies:${SpringCloudAlibabaVersion}"
+        }
+    }
+
+}
