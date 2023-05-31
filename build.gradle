@@ -119,3 +119,30 @@ subprojects {
     }
 
 }
+
+// 子项目
+project("common") {
+    dependencies {
+        implementation 'org.projectlombok:lombok'
+        implementation('org.springframework.boot:spring-boot-starter-web') {
+            exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+        }
+        implementation 'org.springframework.boot:spring-boot-starter-undertow'
+    }
+}
+
+project("service-base") {
+    dependencies {
+        implementation(project(":common"))
+    }
+}
+
+project("service-core") {
+    dependencies {
+        implementation(project(":service-base"))
+        implementation 'mysql:mysql-connector-java'
+        implementation 'com.baomidou:mybatis-plus-boot-starter'
+        implementation 'com.baomidou:mybatis-plus-generator'
+        implementation 'org.apache.velocity:velocity-engine-core'
+    }
+}

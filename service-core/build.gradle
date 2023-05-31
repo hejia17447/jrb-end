@@ -1,9 +1,2 @@
-apply plugin: 'org.springframework.boot'
 
-dependencies {
-    implementation(project(":service-base"))
-    implementation 'mysql:mysql-connector-java'
-    implementation 'com.baomidou:mybatis-plus-boot-starter'
-    implementation 'com.baomidou:mybatis-plus-generator'
-    implementation 'org.apache.velocity:velocity-engine-core'
-}
+
