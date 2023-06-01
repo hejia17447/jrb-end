@@ -118,6 +118,8 @@ subprojects {
             dependency "org.projectlombok:lombok:1.18.28"
 
             dependency "org.springframework.boot:spring-boot-starter-web:${SpringBootVersion}"
+
+            dependency "org.springframework:spring-jdbc:6.0.6"
         }
         imports {
             mavenBom "org.springframework.boot:spring-boot-starter:${SpringBootVersion}"

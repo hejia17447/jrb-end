@@ -1,5 +1,7 @@
 package org.hejia.jrb.core.controller.admin;
 
+import org.hejia.common.exception.Assert;
+import org.hejia.common.result.ResponseEnum;
 import org.hejia.common.result.Result;
 import org.hejia.jrb.core.pojo.entity.IntegralGrade;
 import org.hejia.jrb.core.service.IntegralGradeService;
@@ -56,6 +58,8 @@ public class AdminIntegralGradeController {
      */
     @PostMapping("/save")
     public Result save(@RequestBody IntegralGrade integralGrade) {
+        // 如果借款额度为空就手动抛出一个自定义的异常！
+        Assert.notNull(integralGrade.getBorrowAmount(), ResponseEnum.BORROW_AMOUNT_NULL_ERROR);
         boolean result = integralGradeService.save(integralGrade);
         if (result) {
             return Result.success().message("保存成功！！！");

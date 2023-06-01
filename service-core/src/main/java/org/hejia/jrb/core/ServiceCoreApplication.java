@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan({"org.hejia.jrb"})
+@ComponentScan({"org.hejia.jrb", "org.hejia.common"})
 public class ServiceCoreApplication {
     public static void main(String[] args) {
         SpringApplication.run(ServiceCoreApplication.class, args);
