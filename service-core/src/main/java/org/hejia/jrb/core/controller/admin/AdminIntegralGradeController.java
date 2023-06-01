@@ -79,4 +79,19 @@ public class AdminIntegralGradeController {
         }
     }
 
+    /**
+     * 根据id修改
+     * @param integralGrade 用户信息
+     * @return 修改结果
+     */
+    @PutMapping("/update")
+    public Result updateById(@RequestBody IntegralGrade integralGrade) {
+        boolean result = integralGradeService.updateById(integralGrade);
+        if (result) {
+            return Result.success().message("修改成功！！！");
+        } else {
+            return Result.error().message("修改失败！！！");
+        }
+    }
+
 }
