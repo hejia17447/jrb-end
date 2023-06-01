@@ -1,5 +1,6 @@
 package org.hejia.jrb.core.controller.admin;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hejia.common.exception.Assert;
 import org.hejia.common.result.ResponseEnum;
 import org.hejia.common.result.Result;
@@ -13,6 +14,7 @@ import java.util.List;
  * 积分等级接口
  */
 
+@Slf4j
 // 用来处理跨域请求的注解
 @CrossOrigin
 @RestController
