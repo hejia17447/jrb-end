@@ -43,10 +43,27 @@ public class AdminIntegralGradeController {
     public Result removeById(@PathVariable Long id) {
         boolean result = integralGradeService.removeById(id);
         if (result) {
-            return Result.success().message("删除成功");
+            return Result.success().message("删除成功！！！");
         } else {
-            return Result.error().message("删除失败");
+            return Result.error().message("删除失败！！！");
         }
     }
+
+    /**
+     * 新增积分等级
+     * @param integralGrade 积分信息
+     * @return 新增结果
+     */
+    @PostMapping("/save")
+    public Result save(@RequestBody IntegralGrade integralGrade) {
+        boolean result = integralGradeService.save(integralGrade);
+        if (result) {
+            return Result.success().message("保存成功！！！");
+        } else {
+            return Result.error().message("保存失败！！！");
+        }
+    }
+
+
 
 }
