@@ -64,6 +64,19 @@ public class AdminIntegralGradeController {
         }
     }
 
-
+    /**
+     * 根据id查询
+     * @param id 用户id
+     * @return 积分信息
+     */
+    @GetMapping("/get/{id}")
+    public Result getById(@PathVariable Long id) {
+        IntegralGrade integralGrade = integralGradeService.getById(id);
+        if (integralGrade != null) {
+            return Result.success().data("record", integralGrade);
+        } else {
+            return Result.error().message("数据不存在！！！");
+        }
+    }
 
 }
