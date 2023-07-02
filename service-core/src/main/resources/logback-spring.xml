@@ -4,7 +4,7 @@
 
     <contextName>hejiajrb</contextName>
     <!-- 日志的输出目录 -->
-    <property name="log.path" value="G:/IdeaProjects/jrb-end/jrb_log/core" />
+    <property name="log.path" value="/home/ubuntu/Projects/jrb-end/jrb_log/core" />
     <!--控制台日志格式：彩色日志-->
     <!-- magenta:洋红 -->
     <!-- boldMagenta:粗红-->

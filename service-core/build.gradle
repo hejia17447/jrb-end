@@ -4,5 +4,7 @@ dependencies {
     implementation 'com.baomidou:mybatis-plus-boot-starter'
     implementation 'com.baomidou:mybatis-plus-generator'
     implementation 'org.apache.velocity:velocity-engine-core'
+    implementation 'com.alibaba:easyexcel'
+    implementation 'org.apache.xmlbeans:xmlbeans'
 }
 

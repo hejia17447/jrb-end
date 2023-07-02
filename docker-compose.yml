@@ -12,6 +12,14 @@ services:
     networks:
       - JRBNet
 
+  JRBNginx:
+    image: nginx
+    container_name: JRBNginx
+    ports:
+      - 80:80
+    networks:
+      - JRBNet
+
 
 networks:
   JRBNet:

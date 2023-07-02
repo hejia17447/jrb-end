@@ -1,7 +1,10 @@
 package org.hejia.jrb.core.mapper;
 
+import org.hejia.jrb.core.pojo.dto.ExcelDictDTO;
 import org.hejia.jrb.core.pojo.entity.Dict;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface DictMapper extends BaseMapper<Dict> {
 
+    /**
+     * 数据字典批量保存
+     * @param list 字典数据
+     */
+    void insertBatch(List<ExcelDictDTO> list);
 }
