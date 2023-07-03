@@ -1,16 +1,21 @@
 package org.hejia.jrb.core.controller.admin;
 
+import com.alibaba.excel.EasyExcel;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hejia.common.exception.BusinessException;
 import org.hejia.common.result.ResponseEnum;
 import org.hejia.common.result.Result;
+import org.hejia.jrb.core.pojo.dto.ExcelDictDTO;
 import org.hejia.jrb.core.service.DictService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author HJ
@@ -40,6 +45,23 @@ public class AdminDictController {
         } catch (IOException e) {
             throw new BusinessException(ResponseEnum.UPLOAD_ERROR, e);
         }
+    }
+
+    @GetMapping("/export")
+    public void export(HttpServletResponse response){
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        // URLEncoder.encode可以防止中文乱码
+        String fileName = URLEncoder.encode("MyDict", StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+        try {
+            EasyExcel.write(response.getOutputStream(), ExcelDictDTO.class).sheet("数据字典").doWrite(dictService.listDictData());
+        } catch (IOException e) {
+            //EXPORT_DATA_ERROR(104, "数据导出失败"),
+            throw  new BusinessException(ResponseEnum.EXPORT_DATA_ERROR, e);
+        }
+
+
     }
 
 }
