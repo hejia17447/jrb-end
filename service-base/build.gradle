@@ -1,4 +1,12 @@
 dependencies {
     api(project(":common"))
+    // spring boot redis缓存引入
+    api("org.springframework.boot:spring-boot-starter-data-redis")
+    // 缓存连接池
+    api("org.apache.commons:commons-pool2")
+    // redis 存储 json序列化
+    api("com.fasterxml.jackson.core:jackson-databind")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
 }
 

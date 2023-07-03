@@ -120,6 +120,10 @@ subprojects {
             dependency "org.springframework.boot:spring-boot-starter-web:${SpringBootVersion}"
 
             dependency "org.springframework:spring-jdbc:6.0.6"
+
+            dependency "org.springframework.boot:spring-boot-starter-data-redis:${SpringBootVersion}"
+
+            dependency "org.apache.commons:commons-pool2:2.11.1"
         }
         imports {
             mavenBom "org.springframework.boot:spring-boot-starter:${SpringBootVersion}"

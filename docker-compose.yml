@@ -6,7 +6,7 @@ services:
     image: mysql
     container_name: JRBMySQL
     ports:
-      - 3306:3306
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: jrb123456
     networks:
@@ -16,10 +16,17 @@ services:
     image: nginx
     container_name: JRBNginx
     ports:
-      - 80:80
+      - "80:80"
     networks:
       - JRBNet
 
+  JRBRedis:
+    image: redis
+    container_name: JRBRedis
+    ports:
+      - "6379:6379"
+    networks:
+      - JRBNet
 
 networks:
   JRBNet:
