@@ -2,20 +2,24 @@ package org.hejia.jrb.core.service.impl;
 
 import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hejia.jrb.core.listener.ExcelDictDTOListener;
+import org.hejia.jrb.core.mapper.DictMapper;
 import org.hejia.jrb.core.pojo.dto.ExcelDictDTO;
 import org.hejia.jrb.core.pojo.entity.Dict;
-import org.hejia.jrb.core.mapper.DictMapper;
 import org.hejia.jrb.core.service.DictService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -27,7 +31,10 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@AllArgsConstructor
 public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements DictService {
+
+    private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 字典数据导入
@@ -65,14 +72,60 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
      */
     @Override
     public List<Dict> listByParentId(Long parentId) {
-        List<Dict> dictList = baseMapper.selectList(new QueryWrapper<Dict>().
+
+        // 先查询redis中是否存在数据列表
+        List<Dict> dictList;
+
+        try {
+            Object o = redisTemplate.opsForValue().get("srb:core:dictList:" + parentId);
+            dictList = castList(o);
+            if (dictList != null) {
+                log.info("从redis中取值");
+                return dictList;
+            }
+        } catch (Exception e) {
+            // 此处不抛出异常，继续执行后面的代码
+            log.error("redis服务器异常：" + ExceptionUtils.getStackTrace(e));
+        }
+
+        log.info("从数据库中取值");
+
+        dictList = baseMapper.selectList(new QueryWrapper<Dict>().
                 eq("parent_id", parentId));
         dictList.forEach(dict -> {
-            //如果有子节点，则是非叶子节点
+            // 如果有子节点，则是非叶子节点
             boolean hasChildren = this.hasChildren(dict.getId());
             dict.setHasChildren(hasChildren);
         });
+
+        // 将数据存入redis
+        try {
+            redisTemplate.opsForValue().set("srb:core:dictList:" + parentId, dictList, 5, TimeUnit.MINUTES);
+            log.info("数据存入redis");
+        } catch (Exception e) {
+            // 此处不抛出异常，继续执行后面的代码
+            log.error("redis服务器异常：" + ExceptionUtils.getStackTrace(e));
+        }
+
         return dictList;
+    }
+
+    /**
+     * 反序列化
+     * @param obj 从redis中读取的数据
+     * @return 返回反序列化结果
+     */
+    private List<Dict> castList(Object obj) {
+        List<Dict> result = new ArrayList<>();
+        if(obj instanceof List<?>)
+        {
+            for (Object o : (List<?>) obj)
+            {
+                result.add((Dict) o);
+            }
+            return result;
+        }
+        return null;
     }
 
     /**
