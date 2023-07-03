@@ -124,6 +124,8 @@ subprojects {
             dependency "org.springframework.boot:spring-boot-starter-data-redis:${SpringBootVersion}"
 
             dependency "org.apache.commons:commons-pool2:2.11.1"
+
+            dependency "org.springframework.boot:spring-boot-configuration-processor:${SpringBootVersion}"
         }
         imports {
             mavenBom "org.springframework.boot:spring-boot-starter:${SpringBootVersion}"

@@ -1,0 +1,14 @@
+dependencies {
+    api(project(":service-base"))
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    // lombok用来简化实体类
+    implementation("org.projectlombok:lombok")
+    implementation("com.aliyun:aliyun-java-sdk-core")
+    implementation("org.springframework.boot:spring-boot-configuration-processor")
+
+}
+test {
+    useJUnitPlatform()
+}

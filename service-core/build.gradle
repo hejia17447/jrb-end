@@ -6,5 +6,9 @@ dependencies {
     implementation 'org.apache.velocity:velocity-engine-core'
     implementation 'com.alibaba:easyexcel'
     implementation 'org.apache.xmlbeans:xmlbeans'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
+test {
+    useJUnitPlatform()
+}
