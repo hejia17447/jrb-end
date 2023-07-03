@@ -126,6 +126,9 @@ subprojects {
             dependency "org.apache.commons:commons-pool2:2.11.1"
 
             dependency "org.springframework.boot:spring-boot-configuration-processor:${SpringBootVersion}"
+
+            dependency "org.springframework.boot:spring-boot-starter-actuator:${SpringBootVersion}"
+
         }
         imports {
             mavenBom "org.springframework.boot:spring-boot-starter:${SpringBootVersion}"

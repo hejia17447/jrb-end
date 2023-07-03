@@ -27,11 +27,11 @@ public class RandomUtils {
 
 	/**
 	 * 给定数组，抽取n个数据
-	 * @param list
-	 * @param n
-	 * @return
+	 * @param list 待抽取的数组
+	 * @param n 抽取的个数
+	 * @return 抽取结果
 	 */
-	public static ArrayList getRandom(List list, int n) {
+	public static ArrayList<Object> getRandom(List<Object> list, int n) {
 
 		Random random = new Random();
 
@@ -46,14 +46,14 @@ public class RandomUtils {
 		}
 
 		// 从HashMap导入数组
-		Object[] robjs = hashMap.values().toArray();
+		Object[] objects = hashMap.values().toArray();
 
-		ArrayList r = new ArrayList();
+		ArrayList<Object> r = new ArrayList<>();
 
 		// 遍历数组并打印数据
 		for (int i = 0; i < n; i++) {
-			r.add(list.get((int) robjs[i]));
-			System.out.print(list.get((int) robjs[i]) + "\t");
+			r.add(list.get((int) objects[i]));
+			System.out.print(list.get((int) objects[i]) + "\t");
 		}
 		System.out.print("\n");
 		return r;

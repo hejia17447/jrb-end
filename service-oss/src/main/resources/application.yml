@@ -1,0 +1,15 @@
+server:
+  port: 8130
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: service-oss
+
+aliyun:
+  oss:
+    endpoint: bearfile
+    keyId: LTAI5tLonsxrMnQetxPXXVLj
+    keySecret: Lwl32M8FRBbgpJC8ifxzBWslT5aPCo
+    bucketName: jrb-file-hejia

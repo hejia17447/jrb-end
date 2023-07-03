@@ -35,7 +35,7 @@ public class ApiSmsController {
      * @param mobile 接收短信电话
      * @return 发送结果
      */
-    @GetMapping("/send/{ mobile }")
+    @GetMapping("/send/{mobile}")
     public Result send(@PathVariable String mobile) {
 
         // 判断手机号不为空

@@ -1,12 +1,12 @@
 dependencies {
-    api(project(":service-base"))
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    implementation("com.aliyun:aliyun-java-sdk-core")
+    api(project(":service-base"))
+    implementation("com.aliyun.oss:aliyun-sdk-oss")
+    implementation("joda-time:joda-time")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
-
 }
+
 test {
     useJUnitPlatform()
 }

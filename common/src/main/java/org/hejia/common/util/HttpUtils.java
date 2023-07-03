@@ -20,9 +20,9 @@ public final class HttpUtils {
 	/**
 	 * post 方式发送http请求.
 	 * 
-	 * @param strUrl
-	 * @param reqData
-	 * @return
+	 * @param strUrl 请求地址
+	 * @param reqData 请求数据
+	 * @return 请求结果
 	 */
 	public static byte[] doPost(String strUrl, byte[] reqData) {
 		return send(strUrl, POST, reqData);
@@ -31,45 +31,45 @@ public final class HttpUtils {
 	/**
 	 * get方式发送http请求.
 	 * 
-	 * @param strUrl
-	 * @return
+	 * @param strUrl 请求地址
+	 * @return 请求结果
 	 */
 	public static byte[] doGet(String strUrl) {
 		return send(strUrl, GET, null);
 	}
 
 	/**
-	 * @param strUrl
-	 * @param reqmethod
-	 * @param reqData
-	 * @return
+	 * @param strUrl 请求地址
+	 * @param reqMethod 请求方式
+	 * @param reqData 请求数据
+	 * @return 请求结果
 	 */
-	public static byte[] send(String strUrl, String reqmethod, byte[] reqData) {
+	public static byte[] send(String strUrl, String reqMethod, byte[] reqData) {
 		try {
 			URL url = new URL(strUrl);
-			HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
-			httpcon.setDoOutput(true);
-			httpcon.setDoInput(true);
-			httpcon.setUseCaches(false);
-			httpcon.setInstanceFollowRedirects(true);
-			httpcon.setConnectTimeout(CONN_TIMEOUT);
-			httpcon.setReadTimeout(READ_TIMEOUT);
-			httpcon.setRequestMethod(reqmethod);
-			httpcon.connect();
-			if (reqmethod.equalsIgnoreCase(POST)) {
-				OutputStream os = httpcon.getOutputStream();
+			HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+			httpCon.setDoOutput(true);
+			httpCon.setDoInput(true);
+			httpCon.setUseCaches(false);
+			httpCon.setInstanceFollowRedirects(true);
+			httpCon.setConnectTimeout(CONN_TIMEOUT);
+			httpCon.setReadTimeout(READ_TIMEOUT);
+			httpCon.setRequestMethod(reqMethod);
+			httpCon.connect();
+			if (reqMethod.equalsIgnoreCase(POST)) {
+				OutputStream os = httpCon.getOutputStream();
 				os.write(reqData);
 				os.flush();
 				os.close();
 			}
-			BufferedReader in = new BufferedReader(new InputStreamReader(httpcon.getInputStream(),"utf-8"));
+			BufferedReader in = new BufferedReader(new InputStreamReader(httpCon.getInputStream(),"utf-8"));
 			String inputLine;
 			StringBuilder bankXmlBuffer = new StringBuilder();
 			while ((inputLine = in.readLine()) != null) {  
 			    bankXmlBuffer.append(inputLine);  
 			}  
-			in.close();  
-			httpcon.disconnect();
+			in.close();
+			httpCon.disconnect();
 			return bankXmlBuffer.toString().getBytes();
 		} catch (Exception ex) {
 			log.error(ex.toString(), ex);
@@ -80,9 +80,9 @@ public final class HttpUtils {
 	/**
 	 * 从输入流中读取数据
 	 * 
-	 * @param inStream
-	 * @return
-	 * @throws Exception
+	 * @param inStream 输入流
+	 * @return 读取结果
+	 * @throws Exception 读取错误
 	 */
 	public static byte[] readInputStream(InputStream inStream) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();

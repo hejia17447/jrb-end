@@ -3,4 +3,5 @@ include 'common'
 include 'service-base'
 include 'service-core'
 include 'service-sms'
+include 'service-oss'
 
