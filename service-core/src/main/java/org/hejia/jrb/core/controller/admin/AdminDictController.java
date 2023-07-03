@@ -8,6 +8,7 @@ import org.hejia.common.exception.BusinessException;
 import org.hejia.common.result.ResponseEnum;
 import org.hejia.common.result.Result;
 import org.hejia.jrb.core.pojo.dto.ExcelDictDTO;
+import org.hejia.jrb.core.pojo.entity.Dict;
 import org.hejia.jrb.core.service.DictService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * @author HJ
@@ -47,6 +49,10 @@ public class AdminDictController {
         }
     }
 
+    /**
+     * 导出字典API
+     * @param response 数据流
+     */
     @GetMapping("/export")
     public void export(HttpServletResponse response){
         response.setContentType("application/vnd.ms-excel");
@@ -61,7 +67,17 @@ public class AdminDictController {
             throw  new BusinessException(ResponseEnum.EXPORT_DATA_ERROR, e);
         }
 
+    }
 
+    /**
+     * 根据上级id获取子节点数据列表API
+     * @param parentId 父id
+     * @return 子节点列表
+     */
+    @GetMapping("/listByParentId/{parentId}")
+    public Result listByParentId(@PathVariable Long parentId) {
+        List<Dict> dictList = dictService.listByParentId(parentId);
+        return Result.success().data("list", dictList);
     }
 
 }

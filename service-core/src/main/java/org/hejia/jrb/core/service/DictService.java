@@ -29,4 +29,11 @@ public interface DictService extends IService<Dict> {
      */
     List<ExcelDictDTO> listDictData();
 
+    /**
+     * 根据父ID查询数据列表
+     * @param parentId 父ID
+     * @return 结果
+     */
+    List<Dict> listByParentId(Long parentId);
+
 }

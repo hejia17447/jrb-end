@@ -1,6 +1,7 @@
 package org.hejia.jrb.core.service.impl;
 
 import com.alibaba.excel.EasyExcel;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.hejia.jrb.core.listener.ExcelDictDTOListener;
 import org.hejia.jrb.core.pojo.dto.ExcelDictDTO;
@@ -55,5 +56,33 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
             excelDictDTOList.add(excelDictDTO);
         });
         return excelDictDTOList;
+    }
+
+    /**
+     * 根据父ID查询数据列表
+     * @param parentId 父ID
+     * @return 结果
+     */
+    @Override
+    public List<Dict> listByParentId(Long parentId) {
+        List<Dict> dictList = baseMapper.selectList(new QueryWrapper<Dict>().
+                eq("parent_id", parentId));
+        dictList.forEach(dict -> {
+            //如果有子节点，则是非叶子节点
+            boolean hasChildren = this.hasChildren(dict.getId());
+            dict.setHasChildren(hasChildren);
+        });
+        return dictList;
+    }
+
+    /**
+     * 判断该节点是否有子节点
+     * @param id 节点id
+     * @return 是否有子节点
+     */
+    private boolean hasChildren(Long id) {
+        QueryWrapper<Dict> queryWrapper = new QueryWrapper<Dict>().eq("parent_id", id);
+        Long count = baseMapper.selectCount(queryWrapper);
+        return count.intValue() > 0;
     }
 }
