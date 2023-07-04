@@ -15,8 +15,6 @@ import java.util.List;
  */
 
 @Slf4j
-// 用来处理跨域请求的注解
-@CrossOrigin
 @RestController
 @RequestMapping("admin/core/integralGrade")
 public class AdminIntegralGradeController {

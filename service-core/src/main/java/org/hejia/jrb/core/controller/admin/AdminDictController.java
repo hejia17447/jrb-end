@@ -25,7 +25,6 @@ import java.util.List;
  * @description 字典接口
  */
 @Slf4j
-@CrossOrigin
 @RestController
 @AllArgsConstructor
 @RequestMapping("/admin/core/dict")

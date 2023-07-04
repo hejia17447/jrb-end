@@ -13,7 +13,6 @@ import java.util.List;
  * 用户登录历史记录api
  */
 @Slf4j
-@CrossOrigin
 @RestController
 @AllArgsConstructor
 @RequestMapping("/admin/core/userLoginRecord")

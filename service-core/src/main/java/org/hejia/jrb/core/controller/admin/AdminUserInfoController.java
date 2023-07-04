@@ -11,7 +11,6 @@ import org.hejia.jrb.core.service.UserInfoService;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@CrossOrigin
 @RestController
 @AllArgsConstructor
 @RequestMapping("/admin/core/userInfo")

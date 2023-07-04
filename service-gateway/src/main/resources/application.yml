@@ -1,0 +1,30 @@
+server:
+  port: 8114
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: service-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.1.6:8848
+    gateway:
+      discovery:
+        locator:
+          # gateway可以发现nacos中的微服务，并自动生成转发路由
+          enabled: true
+      routes:
+        - id: service-core
+          uri: lb://service-core
+          predicates:
+            - Path=/*/core/**
+        - id: service-sms
+          uri: lb://service-sms
+          predicates:
+            - Path=/*/sms/**
+        - id: service-oss
+          uri: lb://service-oss
+          predicates:
+            - Path=/*/oss/**

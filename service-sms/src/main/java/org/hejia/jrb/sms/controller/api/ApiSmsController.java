@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
  * 短信服务API
  */
 @Slf4j
-@CrossOrigin
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/sms")

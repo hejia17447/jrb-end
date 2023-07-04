@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.*;
  * @since 2023-05-31
  */
 @Slf4j
-@CrossOrigin
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/core/userInfo")
