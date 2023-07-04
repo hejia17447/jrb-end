@@ -1,6 +1,9 @@
 package org.hejia.jrb.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.hejia.common.exception.Assert;
@@ -13,12 +16,14 @@ import org.hejia.jrb.core.mapper.UserLoginRecordMapper;
 import org.hejia.jrb.core.pojo.entity.UserAccount;
 import org.hejia.jrb.core.pojo.entity.UserInfo;
 import org.hejia.jrb.core.pojo.entity.UserLoginRecord;
+import org.hejia.jrb.core.pojo.query.UserInfoQuery;
 import org.hejia.jrb.core.pojo.vo.LoginVO;
 import org.hejia.jrb.core.pojo.vo.RegisterVO;
 import org.hejia.jrb.core.pojo.vo.UserInfoVO;
 import org.hejia.jrb.core.service.UserInfoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 /**
  * <p>
@@ -120,5 +125,32 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
         return userInfoVO;
 
+    }
+
+    /**
+     * 获取会员用户列表
+     * @param pageParam 分页信息
+     * @param userInfoQuery 用户查询信息
+     * @return 用户列表
+     */
+    @Override
+    public IPage<UserInfo> listPage(Page<UserInfo> pageParam, UserInfoQuery userInfoQuery) {
+
+        String mobile = userInfoQuery.getMobile();
+        Integer status = userInfoQuery.getStatus();
+        Integer userType = userInfoQuery.getUserType();
+
+        QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+
+        if (ObjectUtils.isEmpty(userInfoQuery)) {
+            return baseMapper.selectPage(pageParam, null);
+        }
+
+        userInfoQueryWrapper
+                .eq(StringUtils.isNotBlank(mobile), "mobile", mobile)
+                .eq(status != null, "status", status)
+                .eq(userType != null, "user_type", userType);
+
+        return baseMapper.selectPage(pageParam, userInfoQueryWrapper);
     }
 }

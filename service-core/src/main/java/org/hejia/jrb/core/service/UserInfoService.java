@@ -1,7 +1,10 @@
 package org.hejia.jrb.core.service;
 
-import org.hejia.jrb.core.pojo.entity.UserInfo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.hejia.jrb.core.pojo.entity.UserInfo;
+import org.hejia.jrb.core.pojo.query.UserInfoQuery;
 import org.hejia.jrb.core.pojo.vo.LoginVO;
 import org.hejia.jrb.core.pojo.vo.RegisterVO;
 import org.hejia.jrb.core.pojo.vo.UserInfoVO;
@@ -29,4 +32,13 @@ public interface UserInfoService extends IService<UserInfo> {
      * @return 登录结果
      */
     UserInfoVO login(LoginVO loginVO, String ip);
+
+    /**
+     * 获取会员用户列表
+     * @param pageParam 分页信息
+     * @param userInfoQuery 用户查询信息
+     * @return 用户列表
+     */
+    IPage<UserInfo> listPage(Page<UserInfo> pageParam, UserInfoQuery userInfoQuery);
+
 }
