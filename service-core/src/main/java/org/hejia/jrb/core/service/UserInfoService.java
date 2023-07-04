@@ -41,4 +41,11 @@ public interface UserInfoService extends IService<UserInfo> {
      */
     IPage<UserInfo> listPage(Page<UserInfo> pageParam, UserInfoQuery userInfoQuery);
 
+    /**
+     * 锁定与解锁
+     * @param id 用户id
+     * @param status 需要修改的用户状态
+     */
+    void lock(Long id, Integer status);
+
 }

@@ -30,4 +30,13 @@ public class AdminUserInfoController {
         return Result.success().data("pageModel", pageResult);
     }
 
+    @PutMapping("/lock/{id}/{status}")
+    public Result lock(
+            @PathVariable("id") Long id,
+            @PathVariable("status") Integer status
+    ) {
+        userInfoService.lock(id, status);
+        return Result.success().message(status == 1 ? "解锁成功" : "锁定成功");
+    }
+
 }
