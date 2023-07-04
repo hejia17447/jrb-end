@@ -42,7 +42,7 @@ public class FileServiceImpl implements FileService {
         String folder = new DateTime().toString("yyyy/MM/dd");
 
         // 文件名：uuid.扩展名
-        fileName = UUID.randomUUID().toString() + fileName.substring(fileName.lastIndexOf("."));
+        fileName = UUID.randomUUID() + fileName.substring(fileName.lastIndexOf("."));
 
         // 文件根路径
         String key = module + "/" + folder + "/" + fileName;
