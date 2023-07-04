@@ -1,7 +1,7 @@
 buildscript {
     // 统一版本管理
     ext {
-        SpringBootVersion = '3.1.0'
+        SpringBootVersion = '3.0.8'
         SpringCloudAlibabaVersion = '2022.0.0.0-RC2'
         SpringCloudVersion = '2022.0.0'
         MybatisPlusVersion = '3.5.3.1'

@@ -27,6 +27,15 @@ spring:
           max-idle: 8
           # 最小空闲连接，默认0
           min-idle: 0
+
+  # 添加nacos配置
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.1.6:8848
+#        username: jrb-nacos
+#        password: jrb-nacos
+
 # 阿里云短信
 aliyun:
   sms:

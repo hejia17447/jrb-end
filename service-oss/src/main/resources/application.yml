@@ -7,6 +7,12 @@ spring:
   application:
     name: service-oss
 
+  # 添加nacos配置
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.1.6:8848
+
 aliyun:
   oss:
     endpoint: bearfile
