@@ -49,7 +49,7 @@ public class ApiSmsController {
 
         // 手机号是否注册
         boolean result = userInfoClient.checkMobile(mobile);
-        Assert.isTrue(!result, ResponseEnum.MOBILE_EXIST_ERROR);
+        Assert.isTrue(result, ResponseEnum.MOBILE_EXIST_ERROR);
 
         // 生成验证码
         String code = RandomUtils.getFourBitRandom();
