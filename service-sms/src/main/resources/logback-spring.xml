@@ -41,7 +41,7 @@
 
     <!-- 开发环境和测试环境 -->
     <springProfile name="dev,test">
-        <logger name="org.hejia" level="INFO">
+        <logger name="org.hejia" level="DEBUG">
             <appender-ref ref="CONSOLE" />
         </logger>
     </springProfile>

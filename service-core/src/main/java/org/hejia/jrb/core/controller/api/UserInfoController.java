@@ -110,5 +110,12 @@ public class UserInfoController {
 
     }
 
+    @GetMapping("/checkMobile/{mobile}")
+    public Boolean checkMobile(@PathVariable String mobile) {
+
+        return userInfoService.checkMobile(mobile);
+
+    }
+
 }
 

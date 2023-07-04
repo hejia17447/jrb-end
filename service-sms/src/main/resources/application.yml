@@ -33,9 +33,22 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.1.6:8848
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
 #        username: jrb-nacos
 #        password: jrb-nacos
 
+#feign:
+#  client:
+#    config:
+#      # default 设置全局超时时间，可指定服务名称设置单个服务的超时时间
+#      default:
+#        connectTimeout: 5000
+#        readTimeout: 5000
 # 阿里云短信
 aliyun:
   sms:
@@ -44,3 +57,6 @@ aliyun:
     key-secret: FIenCW7BYR8TlPeEzp5CtgZHO2UHPf
     template-code: SMS_154950909
     sign-name: 阿里云短信测试
+logging:
+  level:
+    org.hejia.jrb.sms.client.CoreUserInfoClient: DEBUG

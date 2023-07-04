@@ -7,6 +7,7 @@ import org.hejia.common.result.ResponseEnum;
 import org.hejia.common.result.Result;
 import org.hejia.common.util.RandomUtils;
 import org.hejia.common.util.RegexValidateUtils;
+import org.hejia.jrb.sms.client.CoreUserInfoClient;
 import org.hejia.jrb.sms.service.SmsService;
 import org.hejia.jrb.sms.util.SmsProperties;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -30,6 +31,8 @@ public class ApiSmsController {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
+    private final CoreUserInfoClient userInfoClient;
+
     /**
      * 发送带短信接口
      * @param mobile 接收短信电话
@@ -43,6 +46,10 @@ public class ApiSmsController {
 
         // 判断手机号不正确
         Assert.isTrue(RegexValidateUtils.checkCellphone(mobile), ResponseEnum.MOBILE_ERROR);
+
+        // 手机号是否注册
+        boolean result = userInfoClient.checkMobile(mobile);
+        Assert.isTrue(!result, ResponseEnum.MOBILE_EXIST_ERROR);
 
         // 生成验证码
         String code = RandomUtils.getFourBitRandom();

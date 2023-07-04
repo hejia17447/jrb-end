@@ -168,4 +168,17 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         baseMapper.updateById(userInfo);
 
     }
+
+    /**
+     * 检查手机号是否注册
+     * @param mobile 手机号
+     * @return 检查结果
+     */
+    @Override
+    public Boolean checkMobile(String mobile) {
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("mobile", mobile);
+        Long count = baseMapper.selectCount(queryWrapper);
+        return count > 0;
+    }
 }

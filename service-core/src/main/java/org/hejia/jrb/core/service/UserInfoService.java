@@ -48,4 +48,10 @@ public interface UserInfoService extends IService<UserInfo> {
      */
     void lock(Long id, Integer status);
 
+    /**
+     * 检查手机号是否注册
+     * @param mobile 手机号
+     * @return 检查结果
+     */
+    Boolean checkMobile(String mobile);
 }

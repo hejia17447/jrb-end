@@ -12,6 +12,8 @@ dependencies {
     api("io.jsonwebtoken:jjwt-jackson")
     api("javax.xml.bind:jaxb-api")
     api("com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery")
+    api("org.springframework.cloud:spring-cloud-starter-openfeign")
+    api("org.springframework.cloud:spring-cloud-starter-loadbalancer")
 
 }
 
