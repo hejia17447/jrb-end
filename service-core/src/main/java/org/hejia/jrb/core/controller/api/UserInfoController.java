@@ -8,6 +8,7 @@ import org.hejia.common.exception.Assert;
 import org.hejia.common.result.ResponseEnum;
 import org.hejia.common.result.Result;
 import org.hejia.common.util.RegexValidateUtils;
+import org.hejia.jrb.base.utils.JwtUtils;
 import org.hejia.jrb.core.pojo.vo.LoginVO;
 import org.hejia.jrb.core.pojo.vo.RegisterVO;
 import org.hejia.jrb.core.pojo.vo.UserInfoVO;
@@ -88,6 +89,24 @@ public class UserInfoController {
         UserInfoVO userInfoVO = userInfoService.login(loginVO, ip);
 
         return Result.success().data("userInfo", userInfoVO);
+
+    }
+
+    /**
+     * 校验令牌
+     * @param request 获取token
+     * @return 校验结果
+     */
+    @GetMapping("/checkToken")
+    public Result checkToken(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        boolean result = JwtUtils.checkToken(token);
+
+        if (result) {
+            return Result.success();
+        } else {
+            return Result.setResult(ResponseEnum.LOGIN_AUTH_ERROR);
+        }
 
     }
 
