@@ -14,11 +14,12 @@ import java.util.Date;
 public class JwtUtils {
 
     private static final long tokenExpiration = 24*60*60*1000;
-    private static final String tokenSignKey = "A1t2g3uigu123456";
+    private static final String tokenSignKey = "ei7v0phOvU5ipLAUW8AcECSWm04R2pAFGf9zXJDSLm3IDmfYF5cUfBUqEFJQmLd8o8ASGoKgKDfmpVAgczmrHMXe2QzjO5WxZBTFuDEbXG9VdFKBin0HnfzCCf0RW6i0BLNpC8Plmafc82XaD5UZbcy4UEzn5U1XeJmvmNHMynGIgN0IEZ1rlq5HLofZGm9G8QMUulIQb0R3P9iByvNRQwDE8peoLgjXntEfWIzJt8yMqYwKl0WMii2o6ryP5OMSmcdadHm7EySZro68rgTmph6OJX7bTv59pLl85grXl2Ztra0XoYsMWvVstVGEce2vNHTjXczQE3iY5spAORuMMOBeMud7GuncWXvCQWovJaLOYRLNDxIXD9nwKMRgOOxCIfuCZTcUW1h4PYvfyNPoGyWIE2go5E9IMU0uvXXMpFeYDa1qyqIjZhyNrMMPRjLJJ2ZX0yKwMXnQWudtFMjcdWq8MXo4JZu8xT3AwspaktD4YWlcKFbvUoCi8VeYBeaE";
 
     private static Key getKeyInstance(){
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS512;
         byte[] bytes = DatatypeConverter.parseBase64Binary(tokenSignKey);
+        // byte[] decode = Decoders.BASE64.decode(tokenSignKey);
         return new SecretKeySpec(bytes,signatureAlgorithm.getJcaName());
     }
 

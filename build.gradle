@@ -108,6 +108,8 @@ subprojects {
             dependency "joda-time:joda-time:${JodatimeVersion}"
             // jwt工具
             dependency "io.jsonwebtoken:jjwt-api:${JWTVersion}"
+            dependency "io.jsonwebtoken:jjwt-impl:${JWTVersion}"
+            dependency "io.jsonwebtoken:jjwt-jackson:${JWTVersion}"
             // httpclient
             dependency "org.apache.httpcomponents.client5:httpclient5-parent:${Httpclient5Version}"
 

@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
 @AllArgsConstructor
-@RequestMapping("/userInfo")
+@RequestMapping("/api/core/userInfo")
 public class UserInfoController {
 
     private final UserInfoService userInfoService;
