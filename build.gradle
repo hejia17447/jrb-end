@@ -107,7 +107,7 @@ subprojects {
             // 日期时间工具
             dependency "joda-time:joda-time:${JodatimeVersion}"
             // jwt工具
-            dependency "io.jsonwebtoken:jjwt-root:${JWTVersion}"
+            dependency "io.jsonwebtoken:jjwt-api:${JWTVersion}"
             // httpclient
             dependency "org.apache.httpcomponents.client5:httpclient5-parent:${Httpclient5Version}"
 
@@ -128,6 +128,8 @@ subprojects {
             dependency "org.springframework.boot:spring-boot-configuration-processor:${SpringBootVersion}"
 
             dependency "org.springframework.boot:spring-boot-starter-actuator:${SpringBootVersion}"
+
+            dependency "javax.xml.bind:jaxb-api:2.3.1"
 
         }
         imports {

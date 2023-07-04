@@ -2,7 +2,9 @@ package org.hejia.jrb.core.service;
 
 import org.hejia.jrb.core.pojo.entity.UserInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.hejia.jrb.core.pojo.vo.LoginVO;
 import org.hejia.jrb.core.pojo.vo.RegisterVO;
+import org.hejia.jrb.core.pojo.vo.UserInfoVO;
 
 /**
  * <p>
@@ -20,4 +22,11 @@ public interface UserInfoService extends IService<UserInfo> {
      */
     void register(RegisterVO registerVO);
 
+    /**
+     * 用户登录
+     * @param loginVO 登录信息
+     * @param ip 请求地址
+     * @return 登录结果
+     */
+    UserInfoVO login(LoginVO loginVO, String ip);
 }

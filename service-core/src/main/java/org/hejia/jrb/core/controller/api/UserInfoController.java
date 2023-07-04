@@ -1,13 +1,16 @@
 package org.hejia.jrb.core.controller.api;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hejia.common.exception.Assert;
 import org.hejia.common.result.ResponseEnum;
 import org.hejia.common.result.Result;
 import org.hejia.common.util.RegexValidateUtils;
+import org.hejia.jrb.core.pojo.vo.LoginVO;
 import org.hejia.jrb.core.pojo.vo.RegisterVO;
+import org.hejia.jrb.core.pojo.vo.UserInfoVO;
 import org.hejia.jrb.core.service.UserInfoService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -65,6 +68,26 @@ public class UserInfoController {
 
         return Result.success().message("注册成功");
 
+
+    }
+
+    /**
+     * 会员登录
+     * @param loginVO 登录信息
+     * @param request 登录请求,用于获取请求IP
+     * @return 登录结果
+     */
+    @PostMapping("/login")
+    public Result login(@RequestBody LoginVO loginVO, HttpServletRequest request) {
+        String mobile = loginVO.getMobile();
+        String password = loginVO.getPassword();
+        Assert.notEmpty(mobile, ResponseEnum.MOBILE_NULL_ERROR);
+        Assert.notEmpty(password, ResponseEnum.PASSWORD_NULL_ERROR);
+
+        String ip = request.getRemoteAddr();
+        UserInfoVO userInfoVO = userInfoService.login(loginVO, ip);
+
+        return Result.success().data("userInfo", userInfoVO);
 
     }
 
