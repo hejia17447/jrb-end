@@ -49,7 +49,9 @@ public class UnifiedExceptionHandler {
             ServletRequestBindingException.class,
             ConversionNotSupportedException.class,
             MissingServletRequestPartException.class,
-            AsyncRequestTimeoutException.class
+            AsyncRequestTimeoutException.class,
+            Exception.class,
+            RuntimeException.class
     })
     public Result handleException(Exception e) {
         log.error(e.getMessage(), e);

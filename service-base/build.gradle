@@ -15,6 +15,7 @@ dependencies {
     api("com.alibaba.cloud:spring-cloud-starter-alibaba-sentinel")
     api("org.springframework.cloud:spring-cloud-starter-openfeign")
     api("org.springframework.cloud:spring-cloud-starter-loadbalancer")
+    api("com.alibaba:fastjson")
 
 }
 

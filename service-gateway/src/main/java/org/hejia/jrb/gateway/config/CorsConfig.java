@@ -24,6 +24,7 @@ public class CorsConfig {
         // 允许访问的方式
         config.addAllowedMethod("*");
 
+        // 是否允许携带cookie
         config.addAllowedOriginPattern("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
