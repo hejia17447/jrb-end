@@ -6,12 +6,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.hejia.jrb.core.enums.BorrowerStatusEnum;
+import org.hejia.jrb.core.enums.IntegralEnum;
 import org.hejia.jrb.core.mapper.BorrowerAttachMapper;
 import org.hejia.jrb.core.mapper.BorrowerMapper;
 import org.hejia.jrb.core.mapper.UserInfoMapper;
+import org.hejia.jrb.core.mapper.UserIntegralMapper;
 import org.hejia.jrb.core.pojo.entity.Borrower;
 import org.hejia.jrb.core.pojo.entity.BorrowerAttach;
 import org.hejia.jrb.core.pojo.entity.UserInfo;
+import org.hejia.jrb.core.pojo.entity.UserIntegral;
+import org.hejia.jrb.core.pojo.vo.BorrowerApprovalVO;
 import org.hejia.jrb.core.pojo.vo.BorrowerAttachVO;
 import org.hejia.jrb.core.pojo.vo.BorrowerDetailVO;
 import org.hejia.jrb.core.pojo.vo.BorrowerVO;
@@ -44,6 +48,8 @@ public class BorrowerServiceImpl extends ServiceImpl<BorrowerMapper, Borrower> i
     private final DictService dictService;
 
     private final BorrowerAttachService borrowerAttachService;
+
+    private final UserIntegralMapper userIntegralMapper;
 
     /**
      * 根据用户id保存借款人信息
@@ -163,5 +169,63 @@ public class BorrowerServiceImpl extends ServiceImpl<BorrowerMapper, Borrower> i
 
 
         return borrowerDetailVO;
+    }
+
+    /**
+     * 借款审批
+     * @param borrowerApprovalVO 审批信息
+     */
+    @Override
+    public void approval(BorrowerApprovalVO borrowerApprovalVO) {
+        // 借款人认证状态
+        Long borrowerId = borrowerApprovalVO.getBorrowerId();
+        Borrower borrower = baseMapper.selectById(borrowerId);
+        borrower.setStatus(borrowerApprovalVO.getStatus());
+        baseMapper.updateById(borrower);
+
+        Long userId = borrower.getUserId();
+        UserInfo userInfo = userInfoMapper.selectById(userId);
+
+        // 添加积分信息
+        UserIntegral userIntegral = new UserIntegral();
+        userIntegral.setUserId(userId);
+        userIntegral.setIntegral(borrowerApprovalVO.getInfoIntegral());
+        userIntegral.setContent("借款人基本信息");
+        userIntegralMapper.insert(userIntegral);
+
+        int curIntegral = userInfo.getIntegral() + borrowerApprovalVO.getInfoIntegral();
+
+        if(borrowerApprovalVO.getIsIdCardOk()) {
+            curIntegral += IntegralEnum.BORROWER_IDCARD.getIntegral();
+            userIntegral = new UserIntegral();
+            userIntegral.setUserId(userId);
+            userIntegral.setIntegral(IntegralEnum.BORROWER_IDCARD.getIntegral());
+            userIntegral.setContent(IntegralEnum.BORROWER_IDCARD.getMsg());
+            userIntegralMapper.insert(userIntegral);
+        }
+
+        if(borrowerApprovalVO.getIsHouseOk()) {
+            curIntegral += IntegralEnum.BORROWER_HOUSE.getIntegral();
+            userIntegral = new UserIntegral();
+            userIntegral.setUserId(userId);
+            userIntegral.setIntegral(IntegralEnum.BORROWER_HOUSE.getIntegral());
+            userIntegral.setContent(IntegralEnum.BORROWER_HOUSE.getMsg());
+            userIntegralMapper.insert(userIntegral);
+        }
+
+        if(borrowerApprovalVO.getIsCarOk()) {
+            curIntegral += IntegralEnum.BORROWER_CAR.getIntegral();
+            userIntegral = new UserIntegral();
+            userIntegral.setUserId(userId);
+            userIntegral.setIntegral(IntegralEnum.BORROWER_CAR.getIntegral());
+            userIntegral.setContent(IntegralEnum.BORROWER_CAR.getMsg());
+            userIntegralMapper.insert(userIntegral);
+        }
+
+        userInfo.setIntegral(curIntegral);
+        //修改审核状态
+        userInfo.setBorrowAuthStatus(borrowerApprovalVO.getStatus());
+        userInfoMapper.updateById(userInfo);
+
     }
 }

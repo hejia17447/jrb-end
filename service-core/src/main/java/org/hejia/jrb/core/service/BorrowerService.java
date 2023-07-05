@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.hejia.jrb.core.pojo.entity.Borrower;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.hejia.jrb.core.pojo.vo.BorrowerApprovalVO;
 import org.hejia.jrb.core.pojo.vo.BorrowerDetailVO;
 import org.hejia.jrb.core.pojo.vo.BorrowerVO;
 
@@ -45,4 +46,11 @@ public interface BorrowerService extends IService<Borrower> {
      * @return 借款人信息
      */
     BorrowerDetailVO getBorrowerDetailVOById(Long id);
+
+    /**
+     * 借款审批
+     * @param borrowerApprovalVO 审批信息
+     */
+    void approval(BorrowerApprovalVO borrowerApprovalVO);
+
 }
