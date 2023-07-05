@@ -9,13 +9,13 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.1.6:3306/jrb_core?serverTimezone=GMT%2B8&characterEncoding=utf-8
+    url: jdbc:mysql://192.168.1.12:3306/jrb_core?serverTimezone=GMT%2B8&characterEncoding=utf-8
     username: root
     password: jrb123456
   # Redis连接配置
   data:
     redis:
-      host: 192.168.1.6
+      host: 192.168.1.12
       port: 6379
       database: 0
       # 最大等待时间，超时则抛出异常，否则请求一直等待
@@ -35,7 +35,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 192.168.1.6:8848
+        server-addr: 192.168.1.12:8848
 
 
 mybatis-plus:
