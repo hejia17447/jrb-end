@@ -15,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -121,6 +122,36 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         dictQueryWrapper.eq("dict_code", dictCode);
         Dict dict = baseMapper.selectOne(dictQueryWrapper);
         return this.listByParentId(dict.getId());
+    }
+
+    /**
+     * 根据父字典的code和当前字典的value查询该字典的名称
+     * @param dictCode 父字典码
+     * @param value 字典值
+     * @return 字典名称
+     */
+    @Override
+    public String getNameByParentDictCodeAndValue(String dictCode, Integer value) {
+
+        QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
+        dictQueryWrapper.eq("dict_code", dictCode);
+        Dict parentDice = baseMapper.selectOne(dictQueryWrapper);
+
+        if (ObjectUtils.isEmpty(parentDice)) {
+            return "";
+        }
+
+        dictQueryWrapper = new QueryWrapper<>();
+        dictQueryWrapper.eq("parent_id", parentDice.getId())
+                .eq("value", value);
+        Dict dict = baseMapper.selectOne(dictQueryWrapper);
+
+        if (ObjectUtils.isEmpty(dict)) {
+            return "";
+        }
+
+        return dict.getName();
+
     }
 
     /**

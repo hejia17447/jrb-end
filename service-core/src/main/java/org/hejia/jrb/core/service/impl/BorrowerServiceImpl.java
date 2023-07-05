@@ -12,8 +12,12 @@ import org.hejia.jrb.core.mapper.UserInfoMapper;
 import org.hejia.jrb.core.pojo.entity.Borrower;
 import org.hejia.jrb.core.pojo.entity.BorrowerAttach;
 import org.hejia.jrb.core.pojo.entity.UserInfo;
+import org.hejia.jrb.core.pojo.vo.BorrowerAttachVO;
+import org.hejia.jrb.core.pojo.vo.BorrowerDetailVO;
 import org.hejia.jrb.core.pojo.vo.BorrowerVO;
+import org.hejia.jrb.core.service.BorrowerAttachService;
 import org.hejia.jrb.core.service.BorrowerService;
+import org.hejia.jrb.core.service.DictService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +40,10 @@ public class BorrowerServiceImpl extends ServiceImpl<BorrowerMapper, Borrower> i
     private final BorrowerAttachMapper borrowerAttachMapper;
 
     private final UserInfoMapper userInfoMapper;
+
+    private final DictService dictService;
+
+    private final BorrowerAttachService borrowerAttachService;
 
     /**
      * 根据用户id保存借款人信息
@@ -108,5 +116,52 @@ public class BorrowerServiceImpl extends ServiceImpl<BorrowerMapper, Borrower> i
                 .or().like("mobile", keyword)
                 .orderByDesc("id");
         return baseMapper.selectPage(pageParam, borrowerQueryWrapper);
+    }
+
+    /**
+     * 根据借款人id查询借款人信息
+     * @param id 借款人id
+     * @return 借款人信息
+     */
+    @Override
+    public BorrowerDetailVO getBorrowerDetailVOById(Long id) {
+
+        // 获取借款人信息
+        Borrower borrower = baseMapper.selectById(id);
+
+        // 填充基本借款人信息
+        BorrowerDetailVO borrowerDetailVO = new BorrowerDetailVO();
+        BeanUtils.copyProperties(borrower, borrowerDetailVO);
+
+        // 婚否
+        borrowerDetailVO.setMarry(borrower.getMarry()?"是":"否");
+
+        // 性别
+        borrowerDetailVO.setSex(borrower.getSex()==1?"男":"女");
+
+        // 计算下拉列表选中内容
+        String education = dictService.getNameByParentDictCodeAndValue("education", borrower.getEducation());
+        String industry = dictService.getNameByParentDictCodeAndValue("moneyUse", borrower.getIndustry());
+        String income = dictService.getNameByParentDictCodeAndValue("income", borrower.getIncome());
+        String returnSource = dictService.getNameByParentDictCodeAndValue("returnSource", borrower.getReturnSource());
+        String contactsRelation = dictService.getNameByParentDictCodeAndValue("relation", borrower.getContactsRelation());
+
+        // 设置下拉列表选中内容
+        borrowerDetailVO.setEducation(education);
+        borrowerDetailVO.setIndustry(industry);
+        borrowerDetailVO.setIncome(income);
+        borrowerDetailVO.setReturnSource(returnSource);
+        borrowerDetailVO.setContactsRelation(contactsRelation);
+
+        // 审批状态
+        String status = BorrowerStatusEnum.getMsgByStatus(borrower.getStatus());
+        borrowerDetailVO.setStatus(status);
+
+        // 获取附件VO列表
+        List<BorrowerAttachVO> borrowerAttachVOList =  borrowerAttachService.selectBorrowerAttachVOList(id);
+        borrowerDetailVO.setBorrowerAttachVOList(borrowerAttachVOList);
+
+
+        return borrowerDetailVO;
     }
 }

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hejia.common.result.Result;
 import org.hejia.jrb.core.pojo.entity.Borrower;
+import org.hejia.jrb.core.pojo.vo.BorrowerDetailVO;
 import org.hejia.jrb.core.service.BorrowerService;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,17 @@ public class AdminBorrowerController {
         IPage<Borrower> pageModel = borrowerService.listPage(pageParam, keyword);
         return Result.success().data("pageModel", pageModel);
 
+    }
+
+    /**
+     * 获取借款人信息
+     * @param id 借款人id
+     * @return 借款人信息
+     */
+    @GetMapping("/show/{id}")
+    public Result show(@PathVariable Long id) {
+        BorrowerDetailVO borrowerDetailVO = borrowerService.getBorrowerDetailVOById(id);
+        return Result.success().data("borrowerDetailVO", borrowerDetailVO);
     }
 
 
