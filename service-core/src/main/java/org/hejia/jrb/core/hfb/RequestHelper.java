@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.hejia.common.util.HttpUtils;
 import org.hejia.common.util.MD5;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,14 +13,6 @@ import java.util.TreeMap;
 
 @Slf4j
 public class RequestHelper {
-
-    public static void main(String[] args) {
-        Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("d", "4");
-        paramMap.put("b", "2");
-        paramMap.put("c", "3");
-        paramMap.put("a", "1");
-    }
 
     /**
      * 请求数据获取签名
@@ -34,7 +27,7 @@ public class RequestHelper {
             str.append(param.getValue()).append("|");
         }
         str.append(HfbConst.SIGN_KEY);
-        log.info("加密前：" + str.toString());
+        log.info("加密前：" + str);
         String md5Str = MD5.encrypt(str.toString());
         log.info("加密后：" + md5Str);
         return md5Str;
@@ -88,9 +81,9 @@ public class RequestHelper {
                         .append(param.getValue()).append("&");
             }
             log.info(String.format("--> 发送请求到汇付宝：post data %1s", postData));
-            byte[] reqData = postData.toString().getBytes("utf-8");
-            byte[] respdata = HttpUtils.doPost(url,reqData);
-            result = new String(respdata);
+            byte[] reqData = postData.toString().getBytes(StandardCharsets.UTF_8);
+            byte[] respData = HttpUtils.doPost(url,reqData);
+            result = new String(respData);
             log.info(String.format("--> 汇付宝应答结果：result data %1s", result));
         } catch (Exception ex) {
             log.error("封装同步请求:", ex);

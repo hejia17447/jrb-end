@@ -13,8 +13,8 @@ public enum BorrowerStatusEnum {
     AUTH_FAIL(-1, "认证失败"),
     ;
 
-    private Integer status;
-    private String msg;
+    private final Integer status;
+    private final String msg;
 
     public static String getMsgByStatus(int status) {
         BorrowerStatusEnum[] arrObj = BorrowerStatusEnum.values();

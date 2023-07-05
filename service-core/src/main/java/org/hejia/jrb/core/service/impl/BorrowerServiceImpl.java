@@ -1,6 +1,8 @@
 package org.hejia.jrb.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.hejia.jrb.core.enums.BorrowerStatusEnum;
@@ -15,6 +17,7 @@ import org.hejia.jrb.core.service.BorrowerService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 
@@ -86,5 +89,24 @@ public class BorrowerServiceImpl extends ServiceImpl<BorrowerMapper, Borrower> i
         }
 
         return (Integer)objects.get(0);
+    }
+
+    /**
+     * 通过关键字查询借款分页数据
+     * @param pageParam 分页信息
+     * @param keyword 查询关键字
+     * @return 查询结果
+     */
+    @Override
+    public IPage<Borrower> listPage(Page<Borrower> pageParam, String keyword) {
+        if (ObjectUtils.isEmpty(keyword)) {
+            return baseMapper.selectPage(pageParam, null);
+        }
+        QueryWrapper<Borrower> borrowerQueryWrapper = new QueryWrapper<>();
+        borrowerQueryWrapper.like("name", keyword)
+                .or().like("id_card", keyword)
+                .or().like("mobile", keyword)
+                .orderByDesc("id");
+        return baseMapper.selectPage(pageParam, borrowerQueryWrapper);
     }
 }
