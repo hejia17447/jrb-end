@@ -36,4 +36,10 @@ public interface DictService extends IService<Dict> {
      */
     List<Dict> listByParentId(Long parentId);
 
+    /**
+     * 查询字典数据
+     * @param dictCode 字典码
+     * @return 字典及其下级节点
+     */
+    List<Dict> findByDictCode(String dictCode);
 }

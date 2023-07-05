@@ -35,24 +35,7 @@ public class UnifiedExceptionHandler {
      * @param e 异常信息
      * @return 返回异常
      */
-    @ExceptionHandler(value = {
-            NoHandlerFoundException.class,
-            HttpRequestMethodNotSupportedException.class,
-            HttpMediaTypeNotSupportedException.class,
-            MissingPathVariableException.class,
-            MissingServletRequestParameterException.class,
-            TypeMismatchException.class,
-            HttpMessageNotReadableException.class,
-            HttpMessageNotWritableException.class,
-            MethodArgumentNotValidException.class,
-            HttpMediaTypeNotAcceptableException.class,
-            ServletRequestBindingException.class,
-            ConversionNotSupportedException.class,
-            MissingServletRequestPartException.class,
-            AsyncRequestTimeoutException.class,
-            Exception.class,
-            RuntimeException.class
-    })
+    @ExceptionHandler(value = Exception.class)
     public Result handleException(Exception e) {
         log.error(e.getMessage(), e);
         return Result.error();
@@ -78,6 +61,31 @@ public class UnifiedExceptionHandler {
     public Result handleBusinessException(BusinessException e) {
         log.error(e.getMessage(), e);
         return Result.error().message(e.getMessage()).code(e.getCode());
+    }
+
+    /**
+     * Controller上一层相关异常
+     */
+    @ExceptionHandler({
+            NoHandlerFoundException.class,
+            HttpRequestMethodNotSupportedException.class,
+            HttpMediaTypeNotSupportedException.class,
+            MissingPathVariableException.class,
+            MissingServletRequestParameterException.class,
+            TypeMismatchException.class,
+            HttpMessageNotReadableException.class,
+            HttpMessageNotWritableException.class,
+            MethodArgumentNotValidException.class,
+            HttpMediaTypeNotAcceptableException.class,
+            ServletRequestBindingException.class,
+            ConversionNotSupportedException.class,
+            MissingServletRequestPartException.class,
+            AsyncRequestTimeoutException.class
+    })
+    public Result handleServletException(Exception e) {
+        log.error(e.getMessage(), e);
+        // SERVLET_ERROR(-102, "servlet请求异常"),
+        return Result.error().message(ResponseEnum.SERVLET_ERROR.getMessage()).code(ResponseEnum.SERVLET_ERROR.getCode());
     }
 
 }

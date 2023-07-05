@@ -111,6 +111,19 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     }
 
     /**
+     * 查询字典数据
+     * @param dictCode 字典码
+     * @return 字典及其下级节点
+     */
+    @Override
+    public List<Dict> findByDictCode(String dictCode) {
+        QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
+        dictQueryWrapper.eq("dict_code", dictCode);
+        Dict dict = baseMapper.selectOne(dictQueryWrapper);
+        return this.listByParentId(dict.getId());
+    }
+
+    /**
      * 反序列化
      * @param obj 从redis中读取的数据
      * @return 返回反序列化结果

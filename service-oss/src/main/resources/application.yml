@@ -15,7 +15,7 @@ spring:
 
 aliyun:
   oss:
-    endpoint: bearfile
+    endpoint: oss-cn-hangzhou.aliyuncs.com
     keyId: LTAI5tLonsxrMnQetxPXXVLj
     keySecret: Lwl32M8FRBbgpJC8ifxzBWslT5aPCo
     bucketName: jrb-file-hejia

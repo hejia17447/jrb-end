@@ -24,7 +24,7 @@ public class FileController {
      * @param module 上传类型
      * @return 上传结果
      */
-    @PostMapping("upload")
+    @PostMapping("/upload")
     public Result upload(
             @RequestParam("file") MultipartFile file,
             @RequestParam("module") String module
