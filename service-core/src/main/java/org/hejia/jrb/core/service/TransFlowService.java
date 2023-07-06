@@ -1,5 +1,6 @@
 package org.hejia.jrb.core.service;
 
+import org.hejia.jrb.core.pojo.bo.TransFlowBO;
 import org.hejia.jrb.core.pojo.entity.TransFlow;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +14,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface TransFlowService extends IService<TransFlow> {
 
+    /**
+     * 保存交易流水
+     * @param transFlowBO 流水信息
+     */
+    void saveTransFlow(TransFlowBO transFlowBO);
 }
