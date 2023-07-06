@@ -15,6 +15,7 @@ import org.hejia.jrb.core.pojo.entity.BorrowInfo;
 import org.hejia.jrb.core.pojo.entity.IntegralGrade;
 import org.hejia.jrb.core.pojo.entity.UserInfo;
 import org.hejia.jrb.core.service.BorrowInfoService;
+import org.hejia.jrb.core.service.DictService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -37,6 +38,8 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
     private final UserInfoMapper userInfoMapper;
 
     private final IntegralGradeMapper integrationGradeMapper;
+
+    private final DictService dictService;
 
     /**
      * 根据用户id获取该用户的借款额度
@@ -112,5 +115,26 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
             return BorrowInfoStatusEnum.NO_AUTH.getStatus();
         }
         return (Integer) status.get(0);
+    }
+
+    /**
+     * 查询借款信息列表
+     * @return 列表信息
+     */
+    @Override
+    public List<BorrowInfo> selectList() {
+
+        List<BorrowInfo> borrowInfoList = baseMapper.selectBorrowInfoList();
+        borrowInfoList.forEach(borrowInfo -> {
+            String returnMethod = dictService.getNameByParentDictCodeAndValue("returnMethod", borrowInfo.getReturnMethod());
+            String moneyUse = dictService.getNameByParentDictCodeAndValue("moneyUse", borrowInfo.getMoneyUse());
+            String status = BorrowInfoStatusEnum.getMsgByStatus(borrowInfo.getStatus());
+            borrowInfo.getParam().put("returnMethod", returnMethod);
+            borrowInfo.getParam().put("moneyUse", moneyUse);
+            borrowInfo.getParam().put("status", status);
+        });
+
+        return borrowInfoList;
+
     }
 }

@@ -4,6 +4,7 @@ import org.hejia.jrb.core.pojo.entity.BorrowInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * <p>
@@ -35,5 +36,11 @@ public interface BorrowInfoService extends IService<BorrowInfo> {
      * @return 状态信息
      */
     Integer getStatusByUserId(Long userId);
+
+    /**
+     * 查询借款信息列表
+     * @return 列表信息
+     */
+    List<BorrowInfo> selectList();
 
 }
