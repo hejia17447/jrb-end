@@ -1,22 +1,24 @@
 package org.hejia.jrb.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hejia.common.exception.Assert;
 import org.hejia.common.result.ResponseEnum;
 import org.hejia.jrb.core.enums.LendStatusEnum;
+import org.hejia.jrb.core.enums.TransTypeEnum;
 import org.hejia.jrb.core.hfb.FormHelper;
 import org.hejia.jrb.core.hfb.HfbConst;
 import org.hejia.jrb.core.hfb.RequestHelper;
 import org.hejia.jrb.core.mapper.LendItemMapper;
 import org.hejia.jrb.core.mapper.LendMapper;
+import org.hejia.jrb.core.mapper.UserAccountMapper;
+import org.hejia.jrb.core.pojo.bo.TransFlowBO;
 import org.hejia.jrb.core.pojo.entity.Lend;
 import org.hejia.jrb.core.pojo.entity.LendItem;
 import org.hejia.jrb.core.pojo.vo.InvestVO;
-import org.hejia.jrb.core.service.LendItemService;
-import org.hejia.jrb.core.service.LendService;
-import org.hejia.jrb.core.service.UserAccountService;
-import org.hejia.jrb.core.service.UserBindService;
+import org.hejia.jrb.core.service.*;
 import org.hejia.jrb.core.util.LendNoUtils;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,7 @@ import java.util.Map;
  * @author HJ
  * @since 2023-05-31
  */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class LendItemServiceImpl extends ServiceImpl<LendItemMapper, LendItem> implements LendItemService {
@@ -44,6 +47,10 @@ public class LendItemServiceImpl extends ServiceImpl<LendItemMapper, LendItem> i
     private final UserAccountService userAccountService;
 
     private final UserBindService userBindService;
+
+    private final TransFlowService transFlowService;
+
+    private final UserAccountMapper userAccountMapper;
 
     /**
      * 提交投资
@@ -130,4 +137,59 @@ public class LendItemServiceImpl extends ServiceImpl<LendItemMapper, LendItem> i
         return FormHelper.buildForm(HfbConst.INVEST_URL, paramMap);
 
     }
+
+    /**
+     * 回调方法，添加交易流水
+     * @param paramMap 回调信息
+     */
+    @Override
+    public void notify(Map<String, Object> paramMap) {
+
+        // 获取投资编号
+        String agentBillNo = (String)paramMap.get("agentBillNo");
+
+        boolean result = transFlowService.isSaveTransFlow(agentBillNo);
+        if(result){
+            log.warn("幂等性返回");
+            return;
+        }
+
+        // 获取用户的绑定协议号
+        String bindCode = (String)paramMap.get("voteBindCode");
+        String voteAmt = (String)paramMap.get("voteAmt");
+
+        // 修改商户系统中的用户账户金额：余额、冻结金额
+        userAccountMapper.updateAccount(bindCode, new BigDecimal("-" + voteAmt), new BigDecimal(voteAmt));
+
+        // 修改投资记录的投资状态改为已支付
+        LendItem lendItem = this.getByLendItemNo(agentBillNo);
+        lendItem.setStatus(1);//已支付
+        baseMapper.updateById(lendItem);
+
+        //修改标的信息：投资人数、已投金额
+        Long lendId = lendItem.getLendId();
+        Lend lend = lendMapper.selectById(lendId);
+        lend.setInvestNum(lend.getInvestNum() + 1);
+        lend.setInvestAmount(lend.getInvestAmount().add(lendItem.getInvestAmount()));
+        lendMapper.updateById(lend);
+
+        //新增交易流水
+        TransFlowBO transFlowBO = new TransFlowBO(
+                agentBillNo,
+                bindCode,
+        new BigDecimal(voteAmt),
+        TransTypeEnum.INVEST_LOCK,
+        "投资项目编号：" + lend.getLendNo() + "，项目名称：" + lend.getTitle());
+        transFlowService.saveTransFlow(transFlowBO);
+
+        log.info("投标成功");
+
+    }
+
+    private LendItem getByLendItemNo(String lendItemNo) {
+        QueryWrapper<LendItem> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("lend_item_no", lendItemNo);
+        return baseMapper.selectOne(queryWrapper);
+    }
+
 }
