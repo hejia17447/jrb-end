@@ -48,4 +48,17 @@ public class TransFlowServiceImpl extends ServiceImpl<TransFlowMapper, TransFlow
         baseMapper.insert(transFlow);
 
     }
+
+    /**
+     * 判断流水是否存在
+     * @param agentBillNo 流水号
+     * @return 是否有该流水
+     */
+    @Override
+    public boolean isSaveTransFlow(String agentBillNo) {
+        QueryWrapper<TransFlow> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("trans_no", agentBillNo);
+        Long count = baseMapper.selectCount(queryWrapper);
+        return count > 0;
+    }
 }

@@ -82,6 +82,14 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
 
         log.info("充值成功：" + JSONObject.toJSONString(paramMap));
 
+        //判断交易流水是否存在
+        String agentBillNo = (String)paramMap.get("agentBillNo"); //商户充值订单号
+        boolean isSave = transFlowService.isSaveTransFlow(agentBillNo);
+        if(isSave){
+            log.warn("幂等性返回");
+            return "success";
+        }
+
         // 充值人绑定协议号
         String bindCode = (String)paramMap.get("bindCode");
         // 充值金额
@@ -92,7 +100,6 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
 
         // 增加交易流水
         // 商户充值订单号
-        String agentBillNo = (String)paramMap.get("agentBillNo");
         TransFlowBO transFlowBO = new TransFlowBO(
                 agentBillNo,
                 bindCode,

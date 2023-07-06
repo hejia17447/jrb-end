@@ -19,4 +19,11 @@ public interface TransFlowService extends IService<TransFlow> {
      * @param transFlowBO 流水信息
      */
     void saveTransFlow(TransFlowBO transFlowBO);
+
+    /**
+     * 判断流水是否存在
+     * @param agentBillNo 流水号
+     * @return 是否有该流水
+     */
+    boolean isSaveTransFlow(String agentBillNo);
 }
