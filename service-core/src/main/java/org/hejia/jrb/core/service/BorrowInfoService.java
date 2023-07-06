@@ -2,6 +2,7 @@ package org.hejia.jrb.core.service;
 
 import org.hejia.jrb.core.pojo.entity.BorrowInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.hejia.jrb.core.pojo.vo.BorrowInfoApprovalVO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -50,4 +51,11 @@ public interface BorrowInfoService extends IService<BorrowInfo> {
      * @return 详情信息
      */
     Map<String, Object> getBorrowInfoDetail(long id);
+
+    /**
+     * 审批借款
+     * @param borrowInfoApprovalVO 借款审批信息
+     */
+    void approval(BorrowInfoApprovalVO borrowInfoApprovalVO);
+
 }

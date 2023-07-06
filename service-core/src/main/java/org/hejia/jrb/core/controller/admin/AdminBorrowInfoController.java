@@ -4,11 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hejia.common.result.Result;
 import org.hejia.jrb.core.pojo.entity.BorrowInfo;
+import org.hejia.jrb.core.pojo.vo.BorrowInfoApprovalVO;
 import org.hejia.jrb.core.service.BorrowInfoService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -40,6 +38,18 @@ public class AdminBorrowInfoController {
     public Result show(@PathVariable long id) {
         Map<String, Object> borrowInfoDetail = borrowInfoService.getBorrowInfoDetail(id);
         return Result.success().data("borrowInfoDetail", borrowInfoDetail);
+    }
+
+
+    /**
+     * 审批借款信息
+     * @param borrowInfoApprovalVO 借款审批信息
+     * @return 审批结果
+     */
+    @PostMapping("/approval")
+    public Result approval(@RequestBody BorrowInfoApprovalVO borrowInfoApprovalVO) {
+        borrowInfoService.approval(borrowInfoApprovalVO);
+        return Result.success().message("审批完成");
     }
 
 }

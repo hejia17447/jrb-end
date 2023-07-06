@@ -16,6 +16,7 @@ import org.hejia.jrb.core.pojo.entity.BorrowInfo;
 import org.hejia.jrb.core.pojo.entity.Borrower;
 import org.hejia.jrb.core.pojo.entity.IntegralGrade;
 import org.hejia.jrb.core.pojo.entity.UserInfo;
+import org.hejia.jrb.core.pojo.vo.BorrowInfoApprovalVO;
 import org.hejia.jrb.core.pojo.vo.BorrowerDetailVO;
 import org.hejia.jrb.core.service.BorrowInfoService;
 import org.hejia.jrb.core.service.BorrowerService;
@@ -156,7 +157,7 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
         AssemblyBorrowInfo(borrowInfo);
 
         //根据user_id获取借款人对象
-        QueryWrapper<Borrower> borrowerQueryWrapper = new QueryWrapper<Borrower>();
+        QueryWrapper<Borrower> borrowerQueryWrapper = new QueryWrapper<>();
         borrowerQueryWrapper.eq("user_id", borrowInfo.getUserId());
         Borrower borrower = borrowerMapper.selectOne(borrowerQueryWrapper);
         //组装借款人对象
@@ -167,6 +168,24 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
         result.put("borrowInfo", borrowInfo);
         result.put("borrower", borrowerDetailVO);
         return result;
+    }
+
+    /**
+     * 审批借款
+     * @param borrowInfoApprovalVO 借款审批信息
+     */
+    @Override
+    public void approval(BorrowInfoApprovalVO borrowInfoApprovalVO) {
+        //修改借款信息状态
+        Long borrowInfoId = borrowInfoApprovalVO.getId();
+        BorrowInfo borrowInfo = baseMapper.selectById(borrowInfoId);
+        borrowInfo.setStatus(borrowInfoApprovalVO.getStatus());
+        baseMapper.updateById(borrowInfo);
+        //审核通过则创建标的
+        if (borrowInfoApprovalVO.getStatus().intValue() == BorrowInfoStatusEnum.CHECK_OK.getStatus().intValue()) {
+            //创建标的
+            // TODO
+        }
     }
 
     private void AssemblyBorrowInfo(BorrowInfo borrowInfo) {
