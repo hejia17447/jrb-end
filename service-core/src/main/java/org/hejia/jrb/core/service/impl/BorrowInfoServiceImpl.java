@@ -21,7 +21,9 @@ import org.hejia.jrb.core.pojo.vo.BorrowerDetailVO;
 import org.hejia.jrb.core.service.BorrowInfoService;
 import org.hejia.jrb.core.service.BorrowerService;
 import org.hejia.jrb.core.service.DictService;
+import org.hejia.jrb.core.service.LendService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
@@ -51,6 +53,8 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
     private final BorrowerMapper borrowerMapper;
 
     private final BorrowerService borrowerService;
+
+    private final LendService lendService;
 
     /**
      * 根据用户id获取该用户的借款额度
@@ -175,6 +179,7 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
      * @param borrowInfoApprovalVO 借款审批信息
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void approval(BorrowInfoApprovalVO borrowInfoApprovalVO) {
         //修改借款信息状态
         Long borrowInfoId = borrowInfoApprovalVO.getId();
@@ -184,7 +189,7 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
         //审核通过则创建标的
         if (borrowInfoApprovalVO.getStatus().intValue() == BorrowInfoStatusEnum.CHECK_OK.getStatus().intValue()) {
             //创建标的
-            // TODO
+            lendService.createLend(borrowInfoApprovalVO, borrowInfo);
         }
     }
 
