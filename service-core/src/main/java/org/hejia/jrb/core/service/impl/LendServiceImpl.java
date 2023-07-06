@@ -1,11 +1,13 @@
 package org.hejia.jrb.core.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import org.hejia.jrb.core.enums.LendStatusEnum;
 import org.hejia.jrb.core.mapper.LendMapper;
 import org.hejia.jrb.core.pojo.entity.BorrowInfo;
 import org.hejia.jrb.core.pojo.entity.Lend;
 import org.hejia.jrb.core.pojo.vo.BorrowInfoApprovalVO;
+import org.hejia.jrb.core.service.DictService;
 import org.hejia.jrb.core.service.LendService;
 import org.hejia.jrb.core.util.LendNoUtils;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * <p>
@@ -25,7 +28,10 @@ import java.time.format.DateTimeFormatter;
  * @since 2023-05-31
  */
 @Service
+@AllArgsConstructor
 public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements LendService {
+
+    private final DictService dictService;
 
     /**
      * 创建项目标
@@ -82,5 +88,23 @@ public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements Le
         baseMapper.insert(lend);
 
 
+    }
+
+    /**
+     * 获取标列表
+     * @return 列表
+     */
+    @Override
+    public List<Lend> selectList() {
+
+        List<Lend> lends = baseMapper.selectList(null);
+        lends.forEach(lend -> {
+            String returnMethod = dictService.getNameByParentDictCodeAndValue("returnMethod", lend.getReturnMethod());
+            String status = LendStatusEnum.getMsgByStatus(lend.getStatus());
+            lend.getParam().put("returnMethod", returnMethod);
+            lend.getParam().put("status", status);
+        });
+
+        return lends;
     }
 }

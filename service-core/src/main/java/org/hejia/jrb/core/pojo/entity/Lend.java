@@ -1,15 +1,18 @@
 package org.hejia.jrb.core.pojo.entity;
 
-import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDate;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableField;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -162,6 +165,13 @@ public class Lend implements Serializable {
     @TableField("is_deleted")
     @TableLogic
     private Boolean deleted;
+
+
+    /**
+     * 其他参数
+     */
+    @TableField(exist = false)
+    private Map<String,Object> param = new HashMap<>();
 
 
 }
