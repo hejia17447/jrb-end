@@ -113,4 +113,19 @@ public class UserBindServiceImpl extends ServiceImpl<UserBindMapper, UserBind> i
         userInfo.setBindStatus(UserBindEnum.BIND_OK.getStatus());
         userInfoMapper.updateById(userInfo);
     }
+
+    /**
+     * 根据userId获取用户绑定账号
+     * @param userId 用户id
+     * @return 绑定账号
+     */
+    @Override
+    public String getBindCodeByUserId(Long userId) {
+
+        QueryWrapper<UserBind> userBindQueryWrapper = new QueryWrapper<>();
+        userBindQueryWrapper.eq("user_id", userId);
+        UserBind userBind = baseMapper.selectOne(userBindQueryWrapper);
+        return userBind.getBindCode();
+
+    }
 }
