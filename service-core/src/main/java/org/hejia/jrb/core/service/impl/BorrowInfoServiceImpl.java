@@ -9,19 +9,25 @@ import org.hejia.jrb.core.enums.BorrowInfoStatusEnum;
 import org.hejia.jrb.core.enums.BorrowerStatusEnum;
 import org.hejia.jrb.core.enums.UserBindEnum;
 import org.hejia.jrb.core.mapper.BorrowInfoMapper;
+import org.hejia.jrb.core.mapper.BorrowerMapper;
 import org.hejia.jrb.core.mapper.IntegralGradeMapper;
 import org.hejia.jrb.core.mapper.UserInfoMapper;
 import org.hejia.jrb.core.pojo.entity.BorrowInfo;
+import org.hejia.jrb.core.pojo.entity.Borrower;
 import org.hejia.jrb.core.pojo.entity.IntegralGrade;
 import org.hejia.jrb.core.pojo.entity.UserInfo;
+import org.hejia.jrb.core.pojo.vo.BorrowerDetailVO;
 import org.hejia.jrb.core.service.BorrowInfoService;
+import org.hejia.jrb.core.service.BorrowerService;
 import org.hejia.jrb.core.service.DictService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -40,6 +46,10 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
     private final IntegralGradeMapper integrationGradeMapper;
 
     private final DictService dictService;
+
+    private final BorrowerMapper borrowerMapper;
+
+    private final BorrowerService borrowerService;
 
     /**
      * 根据用户id获取该用户的借款额度
@@ -125,16 +135,46 @@ public class BorrowInfoServiceImpl extends ServiceImpl<BorrowInfoMapper, BorrowI
     public List<BorrowInfo> selectList() {
 
         List<BorrowInfo> borrowInfoList = baseMapper.selectBorrowInfoList();
-        borrowInfoList.forEach(borrowInfo -> {
-            String returnMethod = dictService.getNameByParentDictCodeAndValue("returnMethod", borrowInfo.getReturnMethod());
-            String moneyUse = dictService.getNameByParentDictCodeAndValue("moneyUse", borrowInfo.getMoneyUse());
-            String status = BorrowInfoStatusEnum.getMsgByStatus(borrowInfo.getStatus());
-            borrowInfo.getParam().put("returnMethod", returnMethod);
-            borrowInfo.getParam().put("moneyUse", moneyUse);
-            borrowInfo.getParam().put("status", status);
-        });
+        borrowInfoList.forEach(this::AssemblyBorrowInfo);
 
         return borrowInfoList;
 
+    }
+
+    /**
+     * 根据借款id查询详情信息
+     * @param id 借款id
+     * @return 详情信息
+     */
+    @Override
+    public Map<String, Object> getBorrowInfoDetail(long id) {
+
+        // 查询借款对象
+        BorrowInfo borrowInfo = baseMapper.selectById(id);
+
+        // 组装数据
+        AssemblyBorrowInfo(borrowInfo);
+
+        //根据user_id获取借款人对象
+        QueryWrapper<Borrower> borrowerQueryWrapper = new QueryWrapper<Borrower>();
+        borrowerQueryWrapper.eq("user_id", borrowInfo.getUserId());
+        Borrower borrower = borrowerMapper.selectOne(borrowerQueryWrapper);
+        //组装借款人对象
+        BorrowerDetailVO borrowerDetailVO = borrowerService.getBorrowerDetailVOById(borrower.getId());
+
+        //组装数据
+        Map<String, Object> result = new HashMap<>();
+        result.put("borrowInfo", borrowInfo);
+        result.put("borrower", borrowerDetailVO);
+        return result;
+    }
+
+    private void AssemblyBorrowInfo(BorrowInfo borrowInfo) {
+        String returnMethod = dictService.getNameByParentDictCodeAndValue("returnMethod", borrowInfo.getReturnMethod());
+        String moneyUse = dictService.getNameByParentDictCodeAndValue("moneyUse", borrowInfo.getMoneyUse());
+        String status = BorrowInfoStatusEnum.getMsgByStatus(borrowInfo.getStatus());
+        borrowInfo.getParam().put("returnMethod", returnMethod);
+        borrowInfo.getParam().put("moneyUse", moneyUse);
+        borrowInfo.getParam().put("status", status);
     }
 }

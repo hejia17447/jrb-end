@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -43,4 +44,10 @@ public interface BorrowInfoService extends IService<BorrowInfo> {
      */
     List<BorrowInfo> selectList();
 
+    /**
+     * 根据借款id查询详情信息
+     * @param id 借款id
+     * @return 详情信息
+     */
+    Map<String, Object> getBorrowInfoDetail(long id);
 }
