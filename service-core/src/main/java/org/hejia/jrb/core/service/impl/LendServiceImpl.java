@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.hejia.jrb.core.enums.LendStatusEnum;
+import org.hejia.jrb.core.enums.ReturnMethodEnum;
 import org.hejia.jrb.core.mapper.BorrowerMapper;
 import org.hejia.jrb.core.mapper.LendMapper;
 import org.hejia.jrb.core.pojo.entity.BorrowInfo;
@@ -14,7 +15,7 @@ import org.hejia.jrb.core.pojo.vo.BorrowerDetailVO;
 import org.hejia.jrb.core.service.BorrowerService;
 import org.hejia.jrb.core.service.DictService;
 import org.hejia.jrb.core.service.LendService;
-import org.hejia.jrb.core.util.LendNoUtils;
+import org.hejia.jrb.core.util.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -150,5 +151,29 @@ public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements Le
 
         return result;
 
+    }
+
+    /**
+     * 计算投资收益
+     * @param invest 投资金额
+     * @param yearRate 年化收益
+     * @param totalMonth 期数
+     * @param returnMethod 还款方式
+     * @return 收益
+     */
+    @Override
+    public BigDecimal getInterestCount(BigDecimal invest, BigDecimal yearRate, Integer totalMonth, Integer returnMethod) {
+        BigDecimal interestCount;
+        // 计算总利息
+        if (returnMethod.intValue() == ReturnMethodEnum.ONE.getMethod()) {
+            interestCount = Amount1Helper.getInterestCount(invest, yearRate, totalMonth);
+        } else if (returnMethod.intValue() == ReturnMethodEnum.TWO.getMethod()) {
+            interestCount = Amount2Helper.getInterestCount(invest, yearRate, totalMonth);
+        } else if(returnMethod.intValue() == ReturnMethodEnum.THREE.getMethod()) {
+            interestCount = Amount3Helper.getInterestCount(invest, yearRate, totalMonth);
+        } else {
+            interestCount = Amount4Helper.getInterestCount(invest, yearRate, totalMonth);
+        }
+        return interestCount;
     }
 }
