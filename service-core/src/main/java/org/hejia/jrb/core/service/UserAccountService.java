@@ -30,4 +30,11 @@ public interface UserAccountService extends IService<UserAccount> {
      * @return 回调结果
      */
     String notify(Map<String, Object> paramMap);
+
+    /**
+     * 根据用户id查询用户账户信息
+     * @param userId 用户id
+     * @return 账户信息
+     */
+    BigDecimal getAccount(Long userId);
 }

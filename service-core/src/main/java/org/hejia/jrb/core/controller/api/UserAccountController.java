@@ -9,10 +9,7 @@ import org.hejia.common.result.Result;
 import org.hejia.jrb.base.utils.JwtUtils;
 import org.hejia.jrb.core.hfb.RequestHelper;
 import org.hejia.jrb.core.service.UserAccountService;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -75,6 +72,19 @@ public class UserAccountController {
             return "fail";
         }
 
+    }
+
+    /**
+     * 查询账户余额
+     * @param request 请求，获取token
+     * @return 查询结果
+     */
+    @GetMapping("/auth/getAccount")
+    public Result getAccount(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        Long userId = JwtUtils.getUserId(token);
+        BigDecimal account = userAccountService.getAccount(userId);
+        return Result.success().data("account", account);
     }
 
 }

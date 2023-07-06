@@ -1,6 +1,7 @@
 package org.hejia.jrb.core.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -110,5 +111,20 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
         transFlowService.saveTransFlow(transFlowBO);
 
         return "success";
+    }
+
+    /**
+     * 根据用户id查询用户账户信息
+     * @param userId 用户id
+     * @return 账户信息
+     */
+    @Override
+    public BigDecimal getAccount(Long userId) {
+        // 根据userId查找用户账户
+        QueryWrapper<UserAccount> userAccountQueryWrapper = new QueryWrapper<>();
+        userAccountQueryWrapper.eq("user_id", userId);
+        UserAccount userAccount = baseMapper.selectOne(userAccountQueryWrapper);
+
+        return userAccount.getAmount();
     }
 }
