@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.hejia.jrb.core.pojo.vo.BorrowInfoApprovalVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -30,4 +31,10 @@ public interface LendService extends IService<Lend> {
      */
     List<Lend> selectList();
 
+    /**
+     * 根据标的id查询该标的信息
+     * @param id 标id
+     * @return 标信息
+     */
+    Map<String, Object> getLendDetail(Long id);
 }

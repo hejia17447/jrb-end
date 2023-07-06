@@ -1,12 +1,17 @@
 package org.hejia.jrb.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.hejia.jrb.core.enums.LendStatusEnum;
+import org.hejia.jrb.core.mapper.BorrowerMapper;
 import org.hejia.jrb.core.mapper.LendMapper;
 import org.hejia.jrb.core.pojo.entity.BorrowInfo;
+import org.hejia.jrb.core.pojo.entity.Borrower;
 import org.hejia.jrb.core.pojo.entity.Lend;
 import org.hejia.jrb.core.pojo.vo.BorrowInfoApprovalVO;
+import org.hejia.jrb.core.pojo.vo.BorrowerDetailVO;
+import org.hejia.jrb.core.service.BorrowerService;
 import org.hejia.jrb.core.service.DictService;
 import org.hejia.jrb.core.service.LendService;
 import org.hejia.jrb.core.util.LendNoUtils;
@@ -17,7 +22,9 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -32,6 +39,10 @@ import java.util.List;
 public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements LendService {
 
     private final DictService dictService;
+
+    private final BorrowerMapper borrowerMapper;
+
+    private final BorrowerService borrowerService;
 
     /**
      * 创建项目标
@@ -106,5 +117,38 @@ public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements Le
         });
 
         return lends;
+    }
+
+    /**
+     * 根据标的id查询该标的信息
+     * @param id 标id
+     * @return 标信息
+     */
+    @Override
+    public Map<String, Object> getLendDetail(Long id) {
+
+        // 查询标的对象
+        Lend lend = baseMapper.selectById(id);
+
+        // 组装数据
+        String returnMethod = dictService.getNameByParentDictCodeAndValue("returnMethod", lend.getReturnMethod());
+        String status = LendStatusEnum.getMsgByStatus(lend.getStatus());
+        lend.getParam().put("returnMethod", returnMethod);
+        lend.getParam().put("status", status);
+
+        // 根据user_id获取借款人对象
+        QueryWrapper<Borrower> borrowerQueryWrapper = new QueryWrapper<>();
+        borrowerQueryWrapper.eq("user_id", lend.getUserId());
+        Borrower borrower = borrowerMapper.selectOne(borrowerQueryWrapper);
+        // 组装借款人对象
+        BorrowerDetailVO borrowerDetailVO = borrowerService.getBorrowerDetailVOById(borrower.getId());
+
+        // 组装数据
+        Map<String, Object> result = new HashMap<>();
+        result.put("lend", lend);
+        result.put("borrower", borrowerDetailVO);
+
+        return result;
+
     }
 }
