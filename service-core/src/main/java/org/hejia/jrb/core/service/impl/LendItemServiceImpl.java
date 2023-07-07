@@ -20,6 +20,7 @@ import org.hejia.jrb.core.pojo.vo.InvestVO;
 import org.hejia.jrb.core.service.*;
 import org.hejia.jrb.core.util.LendNoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -58,7 +59,7 @@ public class LendItemServiceImpl extends ServiceImpl<LendItemMapper, LendItem> i
     }
 
     @Autowired
-    public void setLendService(LendService lendService) {
+    public LendItemServiceImpl(@Lazy LendService lendService) {
         this.lendService = lendService;
     }
 

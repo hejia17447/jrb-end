@@ -59,6 +59,7 @@ public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements Le
     private UserAccountMapper userAccountMapper;
 
     private LendItemService lendItemService;
+
     private TransFlowService transFlowService;
 
     @Autowired
@@ -96,9 +97,19 @@ public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements Le
         this.transFlowService = transFlowService;
     }
 
-    private final LendReturnService lendReturnService;
+    private LendReturnService lendReturnService;
 
-    private final LendItemReturnService lendItemReturnService;
+    private LendItemReturnService lendItemReturnService;
+
+    @Autowired
+    public void setLendReturnService(LendReturnService lendReturnService) {
+        this.lendReturnService = lendReturnService;
+    }
+
+    @Autowired
+    public void setLendItemReturnService(LendItemReturnService lendItemReturnService) {
+        this.lendItemReturnService = lendItemReturnService;
+    }
 
     /**
      * 创建项目标
