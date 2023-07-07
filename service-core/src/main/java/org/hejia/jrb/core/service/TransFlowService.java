@@ -4,6 +4,8 @@ import org.hejia.jrb.core.pojo.bo.TransFlowBO;
 import org.hejia.jrb.core.pojo.entity.TransFlow;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 交易流水表 服务类
@@ -26,4 +28,11 @@ public interface TransFlowService extends IService<TransFlow> {
      * @return 是否有该流水
      */
     boolean isSaveTransFlow(String agentBillNo);
+
+    /**
+     * 根据用户id获取交易流水
+     * @param userId 用户id
+     * @return 交易流水
+     */
+    List<TransFlow> selectByUserId(Long userId);
 }

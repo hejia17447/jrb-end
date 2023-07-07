@@ -11,6 +11,8 @@ import org.hejia.jrb.core.pojo.entity.UserInfo;
 import org.hejia.jrb.core.service.TransFlowService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  * 交易流水表 服务实现类
@@ -60,5 +62,21 @@ public class TransFlowServiceImpl extends ServiceImpl<TransFlowMapper, TransFlow
         queryWrapper.eq("trans_no", agentBillNo);
         Long count = baseMapper.selectCount(queryWrapper);
         return count > 0;
+    }
+
+    /**
+     * 根据用户id获取交易流水
+     * @param userId 用户id
+     * @return 交易流水
+     */
+    @Override
+    public List<TransFlow> selectByUserId(Long userId) {
+
+        QueryWrapper<TransFlow> queryWrapper = new QueryWrapper<>();
+        queryWrapper
+                .eq("user_id", userId)
+                .orderByDesc("id");
+        return baseMapper.selectList(queryWrapper);
+
     }
 }
