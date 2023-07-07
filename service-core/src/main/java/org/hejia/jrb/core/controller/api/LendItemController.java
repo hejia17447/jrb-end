@@ -8,13 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.hejia.common.result.Result;
 import org.hejia.jrb.base.utils.JwtUtils;
 import org.hejia.jrb.core.hfb.RequestHelper;
+import org.hejia.jrb.core.pojo.entity.LendItem;
 import org.hejia.jrb.core.pojo.vo.InvestVO;
 import org.hejia.jrb.core.service.LendItemService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,6 +74,17 @@ public class LendItemController {
             return "fail";
         }
         return "success";
+    }
+
+    /**
+     * 获取列表
+     * @param lendId 标的id
+     * @return 标的投资情况
+     */
+    @GetMapping("/list/{lendId}")
+    public Result list(@PathVariable Long lendId) {
+        List<LendItem> lendItemList = lendItemService.selectByLendId(lendId);
+        return Result.success().data("list", lendItemList);
     }
 
 }
