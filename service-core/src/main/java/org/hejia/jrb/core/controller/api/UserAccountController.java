@@ -87,5 +87,45 @@ public class UserAccountController {
         return Result.success().data("account", account);
     }
 
+    /**
+     * 用户提现
+     * @param fetchAmt 体现金额
+     * @param request 获取token
+     * @return 提现结果
+     */
+    @PostMapping("/auth/commitWithdraw/{fetchAmt}")
+    public Result commitWithdraw(@PathVariable BigDecimal fetchAmt, HttpServletRequest request) {
+        String token = request.getHeader("token");
+        Long userId = JwtUtils.getUserId(token);
+        String formStr = userAccountService.commitWithdraw(fetchAmt, userId);
+        return Result.success().data("formStr", formStr);
+    }
+
+    /**
+     * 用户提现异步回调
+     * @param request 请求
+     * @return 回调结果
+     */
+    @PostMapping("/notifyWithdraw")
+    public String notifyWithdraw(HttpServletRequest request) {
+        Map<String, Object> paramMap = RequestHelper.switchMap(request.getParameterMap());
+        log.info("提现异步回调：" + JSON.toJSONString(paramMap));
+
+        // 校验签名
+        if(RequestHelper.isSignEquals(paramMap)) {
+            // 提现成功交易
+            if("0001".equals(paramMap.get("resultCode"))) {
+                userAccountService.notifyWithdraw(paramMap);
+            } else {
+                log.info("提现异步回调充值失败：" + JSON.toJSONString(paramMap));
+                return "fail";
+            }
+        } else {
+            log.info("提现异步回调签名错误：" + JSON.toJSONString(paramMap));
+            return "fail";
+        }
+        return "success";
+    }
+
 }
 

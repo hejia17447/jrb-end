@@ -23,6 +23,7 @@ import org.hejia.jrb.core.service.*;
 import org.hejia.jrb.core.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -248,6 +249,7 @@ public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements Le
      * @param lendId 标id
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void makeLoan(Long lendId) {
 
         // 获取标的信息
