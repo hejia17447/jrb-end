@@ -4,6 +4,7 @@ import org.hejia.jrb.core.pojo.entity.LendItem;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.hejia.jrb.core.pojo.vo.InvestVO;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,4 +30,12 @@ public interface LendItemService extends IService<LendItem> {
      * @param paramMap 回调信息
      */
     void notify(Map<String, Object> paramMap);
+
+    /**
+     * 根据lendId获取投资记录
+     * @param lendId 投资id
+     * @param status 投资状态
+     * @return 投资信息
+     */
+    List<LendItem> selectByLendId(Long lendId, int status);
 }

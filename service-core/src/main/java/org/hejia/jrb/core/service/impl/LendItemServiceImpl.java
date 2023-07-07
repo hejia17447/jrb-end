@@ -2,7 +2,6 @@ package org.hejia.jrb.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hejia.common.exception.Assert;
 import org.hejia.common.result.ResponseEnum;
@@ -20,11 +19,13 @@ import org.hejia.jrb.core.pojo.entity.LendItem;
 import org.hejia.jrb.core.pojo.vo.InvestVO;
 import org.hejia.jrb.core.service.*;
 import org.hejia.jrb.core.util.LendNoUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,20 +38,49 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-@AllArgsConstructor
 public class LendItemServiceImpl extends ServiceImpl<LendItemMapper, LendItem> implements LendItemService {
 
-    private final LendMapper lendMapper;
+    private LendMapper lendMapper;
 
-    private final LendService lendService;
+    private LendService lendService;
 
-    private final UserAccountService userAccountService;
+    private UserAccountService userAccountService;
 
-    private final UserBindService userBindService;
+    private UserBindService userBindService;
 
-    private final TransFlowService transFlowService;
+    private TransFlowService transFlowService;
 
-    private final UserAccountMapper userAccountMapper;
+    private UserAccountMapper userAccountMapper;
+
+    @Autowired
+    public void setLendMapper(LendMapper lendMapper) {
+        this.lendMapper = lendMapper;
+    }
+
+    @Autowired
+    public void setLendService(LendService lendService) {
+        this.lendService = lendService;
+    }
+
+    @Autowired
+    public void setUserAccountService(UserAccountService userAccountService) {
+        this.userAccountService = userAccountService;
+    }
+
+    @Autowired
+    public void setUserBindService(UserBindService userBindService) {
+        this.userBindService = userBindService;
+    }
+
+    @Autowired
+    public void setTransFlowService(TransFlowService transFlowService) {
+        this.transFlowService = transFlowService;
+    }
+
+    @Autowired
+    public void setUserAccountMapper(UserAccountMapper userAccountMapper) {
+        this.userAccountMapper = userAccountMapper;
+    }
 
     /**
      * 提交投资
@@ -184,6 +214,20 @@ public class LendItemServiceImpl extends ServiceImpl<LendItemMapper, LendItem> i
 
         log.info("投标成功");
 
+    }
+
+    /**
+     * 根据lendId获取投资记录
+     * @param lendId 投资id
+     * @param status 投资状态
+     * @return 投资信息
+     */
+    @Override
+    public List<LendItem> selectByLendId(Long lendId, int status) {
+        QueryWrapper<LendItem> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("lend_id", lendId);
+        queryWrapper.eq("status", status);
+        return baseMapper.selectList(queryWrapper);
     }
 
     private LendItem getByLendItemNo(String lendItemNo) {

@@ -1,21 +1,26 @@
 package org.hejia.jrb.core.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hejia.common.exception.BusinessException;
 import org.hejia.jrb.core.enums.LendStatusEnum;
 import org.hejia.jrb.core.enums.ReturnMethodEnum;
+import org.hejia.jrb.core.enums.TransTypeEnum;
+import org.hejia.jrb.core.hfb.HfbConst;
+import org.hejia.jrb.core.hfb.RequestHelper;
 import org.hejia.jrb.core.mapper.BorrowerMapper;
 import org.hejia.jrb.core.mapper.LendMapper;
-import org.hejia.jrb.core.pojo.entity.BorrowInfo;
-import org.hejia.jrb.core.pojo.entity.Borrower;
-import org.hejia.jrb.core.pojo.entity.Lend;
+import org.hejia.jrb.core.mapper.UserAccountMapper;
+import org.hejia.jrb.core.mapper.UserInfoMapper;
+import org.hejia.jrb.core.pojo.bo.TransFlowBO;
+import org.hejia.jrb.core.pojo.entity.*;
 import org.hejia.jrb.core.pojo.vo.BorrowInfoApprovalVO;
 import org.hejia.jrb.core.pojo.vo.BorrowerDetailVO;
-import org.hejia.jrb.core.service.BorrowerService;
-import org.hejia.jrb.core.service.DictService;
-import org.hejia.jrb.core.service.LendService;
+import org.hejia.jrb.core.service.*;
 import org.hejia.jrb.core.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -35,15 +40,56 @@ import java.util.Map;
  * @author HJ
  * @since 2023-05-31
  */
+@Slf4j
 @Service
-@AllArgsConstructor
 public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements LendService {
 
-    private final DictService dictService;
+    private DictService dictService;
 
-    private final BorrowerMapper borrowerMapper;
+    private BorrowerMapper borrowerMapper;
 
-    private final BorrowerService borrowerService;
+    private BorrowerService borrowerService;
+
+    private UserInfoMapper userInfoMapper;
+
+    private UserAccountMapper userAccountMapper;
+
+    private LendItemService lendItemService;
+    private TransFlowService transFlowService;
+
+    @Autowired
+    public void setDictService(DictService dictService) {
+        this.dictService = dictService;
+    }
+
+    @Autowired
+    public void setBorrowerMapper(BorrowerMapper borrowerMapper) {
+        this.borrowerMapper = borrowerMapper;
+    }
+
+    @Autowired
+    public void setBorrowerService(BorrowerService borrowerService) {
+        this.borrowerService = borrowerService;
+    }
+
+    @Autowired
+    public void setUserInfoMapper(UserInfoMapper userInfoMapper) {
+        this.userInfoMapper = userInfoMapper;
+    }
+
+    public void setUserAccountMapper(UserAccountMapper userAccountMapper) {
+        this.userAccountMapper = userAccountMapper;
+    }
+
+    @Autowired
+    public void setLendItemService(LendItemService lendItemService) {
+        this.lendItemService = lendItemService;
+    }
+
+    @Autowired
+    public void setTransFlowService(TransFlowService transFlowService) {
+        this.transFlowService = transFlowService;
+    }
 
     /**
      * 创建项目标
@@ -175,5 +221,96 @@ public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements Le
             interestCount = Amount4Helper.getInterestCount(invest, yearRate, totalMonth);
         }
         return interestCount;
+    }
+
+    /**
+     * 满标放款
+     * @param lendId 标id
+     */
+    @Override
+    public void makeLoan(Long lendId) {
+
+        // 获取标的信息
+        Lend lend = baseMapper.selectById(lendId);
+
+        // 放款接口调用
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("agentId", HfbConst.AGENT_ID);
+        paramMap.put("agentProjectCode", lend.getLendNo());//标的编号
+        String agentBillNo = LendNoUtils.getLoanNo();//放款编号
+        paramMap.put("agentBillNo", agentBillNo);
+
+        //平台收益，放款扣除，借款人借款实际金额=借款金额-平台收益
+        //月年化
+        BigDecimal monthRate = lend.getServiceRate().divide(new BigDecimal(12), 8, RoundingMode.DOWN);
+        //平台实际收益 = 已投金额 * 月年化 * 标的期数
+        BigDecimal realAmount = lend.getInvestAmount().multiply(monthRate).multiply(new BigDecimal(lend.getPeriod()));
+
+        paramMap.put("mchFee", realAmount); //商户手续费(平台实际收益)
+        paramMap.put("timestamp", RequestHelper.getTimestamp());
+        String sign = RequestHelper.getSign(paramMap);
+        paramMap.put("sign", sign);
+
+        log.info("放款参数：" + JSONObject.toJSONString(paramMap));
+
+        // 发送同步远程调用
+        JSONObject result = RequestHelper.sendRequest(paramMap, HfbConst.MAKE_LOAD_URL);
+        log.info("放款结果：" + result.toJSONString());
+
+        //放 款失败
+        if (!"0000".equals(result.getString("resultCode"))) {
+            throw new BusinessException(result.getString("resultMsg"));
+        }
+
+        //更新标的信息
+        lend.setRealAmount(realAmount);
+        lend.setStatus(LendStatusEnum.PAY_RUN.getStatus());
+        lend.setPaymentTime(LocalDateTime.now());
+        baseMapper.updateById(lend);
+
+        // 获取借款人信息
+        Long userId = lend.getUserId();
+        UserInfo userInfo = userInfoMapper.selectById(userId);
+        String bindCode = userInfo.getBindCode();
+
+        //给借款账号转入金额
+        BigDecimal total = new BigDecimal(result.getString("voteAmt"));
+        userAccountMapper.updateAccount(bindCode, total, new BigDecimal(0));
+
+        //新增借款人交易流水
+        TransFlowBO transFlowBO = new TransFlowBO(
+                agentBillNo,
+                bindCode,
+                total,
+                TransTypeEnum.BORROW_BACK,
+                "借款放款到账，编号：" + lend.getLendNo());//项目编号
+        transFlowService.saveTransFlow(transFlowBO);
+
+        //获取投资列表信息
+        List<LendItem> lendItemList = lendItemService.selectByLendId(lendId, 1);
+        lendItemList.forEach(item -> {
+
+            // 获取投资人信息
+            Long investUserId = item.getInvestUserId();
+            UserInfo investUserInfo = userInfoMapper.selectById(investUserId);
+            String investBindCode = investUserInfo.getBindCode();
+
+            // 投资人账号冻结金额转出
+            BigDecimal investAmount = item.getInvestAmount(); //投资金额
+            userAccountMapper.updateAccount(investBindCode, new BigDecimal(0), investAmount.negate());
+
+            // 新增投资人交易流水
+            TransFlowBO investTransFlowBO = new TransFlowBO(
+                    LendNoUtils.getTransNo(),
+                    investBindCode,
+                    investAmount,
+                    TransTypeEnum.INVEST_UNLOCK,
+                    "冻结资金转出，出借放款，编号：" + lend.getLendNo());//项目编号
+            transFlowService.saveTransFlow(investTransFlowBO);
+        });
+
+        //放款成功生成借款人还款计划和投资人回款计划
+        // TODO
+
     }
 }
