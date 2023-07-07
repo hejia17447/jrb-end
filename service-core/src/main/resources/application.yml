@@ -39,6 +39,13 @@ spring:
       discovery:
         server-addr: 192.168.1.12:8848
 
+  rabbitmq:
+    host: 192.168.1.12
+    port: 5672
+    virtual-host: /jrbhost
+    username: admin
+    password: 123456
+
 
 mybatis-plus:
   configuration:

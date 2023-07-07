@@ -1,0 +1,11 @@
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    api("org.springframework.boot:spring-boot-starter-amqp")
+    api("com.alibaba.fastjson2:fastjson2")
+    api("org.projectlombok:lombok")
+}
+
+test {
+    useJUnitPlatform()
+}

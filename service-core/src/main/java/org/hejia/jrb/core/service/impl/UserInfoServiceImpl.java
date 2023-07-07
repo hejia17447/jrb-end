@@ -211,6 +211,21 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
     }
 
+    /**
+     * 根据bindCode获取手机号
+     * @param bindCode 绑定id
+     * @return 手机号
+     */
+    @Override
+    public String getMobileByBindCode(String bindCode) {
+
+        QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+        userInfoQueryWrapper.eq("bind_code", bindCode);
+        UserInfo userInfo = baseMapper.selectOne(userInfoQueryWrapper);
+        return userInfo.getMobile();
+
+    }
+
     private static UserIndexVO getUserIndexVO(UserInfo userInfo, UserAccount userAccount, UserLoginRecord userLoginRecord) {
         UserIndexVO userIndexVO = new UserIndexVO();
         userIndexVO.setUserId(userInfo.getId());

@@ -5,4 +5,5 @@ include 'service-core'
 include 'service-sms'
 include 'service-oss'
 include 'service-gateway'
+include 'service-mq'
 

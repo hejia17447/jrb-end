@@ -1,5 +1,6 @@
 dependencies {
     api(project(":service-base"))
+    api(project(":service-mq"))
     implementation 'mysql:mysql-connector-java'
     implementation 'com.baomidou:mybatis-plus-boot-starter'
     implementation 'com.baomidou:mybatis-plus-generator'

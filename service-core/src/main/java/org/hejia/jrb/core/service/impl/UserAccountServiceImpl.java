@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hejia.common.exception.Assert;
 import org.hejia.common.result.ResponseEnum;
+import org.hejia.jrb.base.dto.SmsDTO;
 import org.hejia.jrb.core.enums.TransTypeEnum;
 import org.hejia.jrb.core.hfb.FormHelper;
 import org.hejia.jrb.core.hfb.HfbConst;
@@ -19,7 +20,10 @@ import org.hejia.jrb.core.pojo.entity.UserInfo;
 import org.hejia.jrb.core.service.TransFlowService;
 import org.hejia.jrb.core.service.UserAccountService;
 import org.hejia.jrb.core.service.UserBindService;
+import org.hejia.jrb.core.service.UserInfoService;
 import org.hejia.jrb.core.util.LendNoUtils;
+import org.hejia.jrb.mq.constant.MQConst;
+import org.hejia.jrb.mq.service.MQService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +51,10 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
     private final TransFlowService transFlowService;
 
     private final UserBindService userBindService;
+
+    private final UserInfoService userInfoService;
+
+    private final MQService mQService;
 
 
     @Override
@@ -113,6 +121,14 @@ public class UserAccountServiceImpl extends ServiceImpl<UserAccountMapper, UserA
 
         "充值");
         transFlowService.saveTransFlow(transFlowBO);
+
+        // 发信息
+        log.info("发消息");
+        String mobile = userInfoService.getMobileByBindCode(bindCode);
+        SmsDTO smsDTO = new SmsDTO();
+        smsDTO.setMobile(mobile);
+        smsDTO.setMessage("充值成功");
+        mQService.sendMessage(MQConst.EXCHANGE_TOPIC_SMS, MQConst.ROUTING_SMS_ITEM, smsDTO);
 
         return "success";
     }
