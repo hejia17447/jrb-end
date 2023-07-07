@@ -496,6 +496,15 @@ public class LendServiceImpl extends ServiceImpl<LendMapper, Lend> implements Le
                 //最后一期应还本金 = 用当前投资人的总投资金额 - 除了最后一期前面期数计算出来的所有的应还本金
                 BigDecimal lastPrincipal = lendItem.getInvestAmount().subtract(sumPrincipal);
                 lendItemReturn.setPrincipal(lastPrincipal);
+
+                //利息
+                BigDecimal sumInterest = lendItemReturnList.stream()
+                        .map(LendItemReturn::getInterest)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                BigDecimal lastInterest = lendItem.getExpectAmount().subtract(sumInterest);
+                lendItemReturn.setInterest(lastInterest);
+
             } else {
                 lendItemReturn.setPrincipal(mapPrincipal.get(currentPeriod));
                 lendItemReturn.setInterest(mapInterest.get(currentPeriod));
