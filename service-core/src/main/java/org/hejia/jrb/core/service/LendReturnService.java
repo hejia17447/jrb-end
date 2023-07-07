@@ -4,6 +4,7 @@ import org.hejia.jrb.core.pojo.entity.LendReturn;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -21,4 +22,20 @@ public interface LendReturnService extends IService<LendReturn> {
      * @return 还款计划
      */
     List<LendReturn> selectByLendId(Long lendId);
+
+    /**
+     * 还款
+     * @param lendReturnId 还款计划id
+     * @param userId 用户id
+     * @return 还款结果
+     */
+    String commitReturn(Long lendReturnId, Long userId);
+
+    /**
+     * 回到
+     * @param paramMap 保存参数
+     */
+    void notify(Map<String, Object> paramMap);
+
+
 }
