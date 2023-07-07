@@ -11,6 +11,7 @@ import org.hejia.common.util.RegexValidateUtils;
 import org.hejia.jrb.base.utils.JwtUtils;
 import org.hejia.jrb.core.pojo.vo.LoginVO;
 import org.hejia.jrb.core.pojo.vo.RegisterVO;
+import org.hejia.jrb.core.pojo.vo.UserIndexVO;
 import org.hejia.jrb.core.pojo.vo.UserInfoVO;
 import org.hejia.jrb.core.service.UserInfoService;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -114,6 +115,19 @@ public class UserInfoController {
 
         return userInfoService.checkMobile(mobile);
 
+    }
+
+    /**
+     * 获取个人空间用户信息
+     * @param request 请求
+     * @return 用户信息
+     */
+    @GetMapping("/auth/getIndexUserInfo")
+    public Result getIndexUserInfo(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        Long userId = JwtUtils.getUserId(token);
+        UserIndexVO userIndexVO = userInfoService.getIndexUserInfo(userId);
+        return Result.success().data("userIndexVO", userIndexVO);
     }
 
 }

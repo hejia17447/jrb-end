@@ -7,6 +7,7 @@ import org.hejia.jrb.core.pojo.entity.UserInfo;
 import org.hejia.jrb.core.pojo.query.UserInfoQuery;
 import org.hejia.jrb.core.pojo.vo.LoginVO;
 import org.hejia.jrb.core.pojo.vo.RegisterVO;
+import org.hejia.jrb.core.pojo.vo.UserIndexVO;
 import org.hejia.jrb.core.pojo.vo.UserInfoVO;
 
 /**
@@ -54,4 +55,11 @@ public interface UserInfoService extends IService<UserInfo> {
      * @return 检查结果
      */
     Boolean checkMobile(String mobile);
+
+    /**
+     * 获取用户个人信息
+     * @param userId 用户id
+     * @return 个人信息
+     */
+    UserIndexVO getIndexUserInfo(Long userId);
 }

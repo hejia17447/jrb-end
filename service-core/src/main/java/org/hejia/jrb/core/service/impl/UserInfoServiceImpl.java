@@ -19,6 +19,7 @@ import org.hejia.jrb.core.pojo.entity.UserLoginRecord;
 import org.hejia.jrb.core.pojo.query.UserInfoQuery;
 import org.hejia.jrb.core.pojo.vo.LoginVO;
 import org.hejia.jrb.core.pojo.vo.RegisterVO;
+import org.hejia.jrb.core.pojo.vo.UserIndexVO;
 import org.hejia.jrb.core.pojo.vo.UserInfoVO;
 import org.hejia.jrb.core.service.UserInfoService;
 import org.springframework.stereotype.Service;
@@ -180,5 +181,47 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         queryWrapper.eq("mobile", mobile);
         Long count = baseMapper.selectCount(queryWrapper);
         return count > 0;
+    }
+
+    /**
+     * 获取用户个人信息
+     * @param userId 用户id
+     * @return 个人信息
+     */
+    @Override
+    public UserIndexVO getIndexUserInfo(Long userId) {
+
+        // 用户信息
+        UserInfo userInfo = baseMapper.selectById(userId);
+        // 账户信息
+        QueryWrapper<UserAccount> userAccountQueryWrapper = new QueryWrapper<>();
+        userAccountQueryWrapper.eq("user_id", userId);
+        UserAccount userAccount = userAccountMapper.selectOne(userAccountQueryWrapper);
+
+        // 登录信息
+        QueryWrapper<UserLoginRecord> userLoginRecordQueryWrapper = new QueryWrapper<>();
+        userLoginRecordQueryWrapper
+                .eq("user_id", userId)
+                .orderByDesc("id")
+                .last("limit 1");
+        UserLoginRecord userLoginRecord = userLoginRecordMapper.selectOne(userLoginRecordQueryWrapper);
+
+        // 组装结果数据
+        return getUserIndexVO(userInfo, userAccount, userLoginRecord);
+
+    }
+
+    private static UserIndexVO getUserIndexVO(UserInfo userInfo, UserAccount userAccount, UserLoginRecord userLoginRecord) {
+        UserIndexVO userIndexVO = new UserIndexVO();
+        userIndexVO.setUserId(userInfo.getId());
+        userIndexVO.setUserType(userInfo.getUserType());
+        userIndexVO.setName(userInfo.getName());
+        userIndexVO.setNickName(userInfo.getNickName());
+        userIndexVO.setHeadImg(userInfo.getHeadImg());
+        userIndexVO.setBindStatus(userInfo.getBindStatus());
+        userIndexVO.setAmount(userAccount.getAmount());
+        userIndexVO.setFreezeAmount(userAccount.getFreezeAmount());
+        userIndexVO.setLastLoginTime(userLoginRecord.getCreateTime());
+        return userIndexVO;
     }
 }
